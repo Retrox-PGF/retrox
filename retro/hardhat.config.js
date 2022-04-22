@@ -11,9 +11,9 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
+const { API_MAIN, API_KOVAN, PRIVATE_KEY_KOVAN, PRIVATE_KEY_LOCAL, PRIVATE_KEY_MAIN } = process.env;
 
-
-// environment variables are defined locally and are the INFURA API keys which are named INFURA_MAIN_KEY, INFURA_KOVAN_KEY
+// environment variables for private keys and API links are defined using .env file
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -23,12 +23,12 @@ module.exports = {
   networks: {
     // for mainnet
     'optimism': {
-      url: "API_MAIN",
+      url: API_MAIN,
       accounts: [PRIVATE_KEY_MAIN]
     },
     // for testnet
     'optimism-kovan': {
-      url: "API_KOVAN",
+      url: API_KOVAN,
       accounts: [PRIVATE_KEY_KOVAN]
     },
     // for the local dev environment
