@@ -22,19 +22,19 @@ module.exports = {
   defaultNetwork: "optimism-kovan",
   networks: {
     // for mainnet
-    'optimism': {
-      url: API_MAIN,
-      accounts: [PRIVATE_KEY_MAIN]
-    },
+    //'optimism': {
+    // url: API_MAIN,
+    // accounts: [PRIVATE_KEY_MAIN]
+    //},
     // for testnet
     'optimism-kovan': {
       url: API_KOVAN,
       accounts: [PRIVATE_KEY_KOVAN]
     },
     // for the local dev environment
-    'optimism-local': {
-      url: "http://localhost:8545",
-      accounts: [PRIVATE_KEY_LOCAL]
-    },
+    //'optimism-local': {
+    //  url: "http://localhost:8545",
+    //  accounts: [PRIVATE_KEY_LOCAL]
+    //},
   },
 };
