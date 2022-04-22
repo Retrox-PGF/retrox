@@ -1,8 +1,18 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
+import RoundCard from './_components/RoundCard'
+import {rounds} from './data/rounds'
 
 export default function Rounds() {
+
+  const roundItems = rounds.map((round) =>
+    <RoundCard
+      roundName={round.name}
+      roundID={round.id}
+    />
+  );
+
   return (
     <div className={styles.container}>
       <Head>
@@ -15,6 +25,10 @@ export default function Rounds() {
         <h1>
           Rounds
         </h1>
+
+        <div className="flex flex-row items-center">
+          {roundItems}
+        </div>
 
       </main>
     </div>

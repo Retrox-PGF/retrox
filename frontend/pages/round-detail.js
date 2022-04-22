@@ -1,8 +1,14 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
+import {rounds} from './data/rounds'
+import { useRouter } from 'next/router'
 
 export default function Rounds() {
+  const router = useRouter()
+  const roundID = router.query.id;
+  const round = rounds.find(o => o.id == roundID);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,7 +19,7 @@ export default function Rounds() {
 
       <main className="text-center text-6xl">
         <h1>
-          Round Name
+          {round.name}
         </h1>
 
       </main>
