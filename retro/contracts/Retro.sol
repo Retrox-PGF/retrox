@@ -96,6 +96,7 @@ contract Retro {
         }
     }
 
+
     /// @notice Calculates the square root of x, rounding down.
     /// @dev Uses the Babylonian method https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method.
     ///
@@ -154,6 +155,8 @@ contract Retro {
         }
     }
 
+
+
     function getRoundData(uint256 roundNum) public view returns (Round memory) {
         return rounds[roundNum];
     }
@@ -161,5 +164,8 @@ contract Retro {
     function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (Nomination memory) {
         return nominations[roundNum][nominationNum];
     }
+
+
+
 
 }
