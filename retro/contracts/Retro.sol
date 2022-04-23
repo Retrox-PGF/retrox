@@ -7,6 +7,7 @@ contract Retro {
     uint256 constant totalVotesPerBadgeHolder = 100;
     uint256 constant nominationDuration = 1;
     uint256 constant votingDuration = 1;
+    uint256 private funds;
 
     enum RoundState {
         Nominations,
@@ -45,6 +46,7 @@ contract Retro {
     );
 
     event RoundCreated(uint256 roundURI, uint256 startBlockTimestamp, uint256 fundsCommitted);
+    event Disperse(address indexed, uint256);
 
     // Only the safe owners can create a new round.
     function createRound(uint256 roundURI, address[] memory badgeHolders, uint256 fundsCommitted) public {
@@ -62,6 +64,18 @@ contract Retro {
 
 
     // function vote(uint256 nominationURI, uint256 votePower) virtual public;
+
+    function disperseFunds(uint roundNum) public {
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
+        uint totalNumVotes = totalVotesPerBadgeHolder * rounds[roundNum].badgeHolders.length;
+        for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
+            uint amount = (nominations[roundNum][i].numVotes / totalNumVotes) * funds;
+            (bool sent,) = nominations[roundNum][i].recipient.call{value: amount}("");
+            require(sent, 'Failed to send');
+            emit Disperse(nominations[roundNum][i].recipient, amount);
+        }
+
+    }
 
 
 }
