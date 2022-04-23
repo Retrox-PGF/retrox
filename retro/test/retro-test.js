@@ -11,30 +11,25 @@ function sleep(milliseconds) {
 
 describe("Retro", function () {
   it("should create a round", async function () {
-    const provider = waffle.provider;
-    const [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
+    // const provider = waffle.provider;
+    // const [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
 
-    console.log(owner.address);
+    // console.log(owner.address);
+    
+    // const Retro = await ethers.getContractFactory("Retro");
+    // const host = "0x74b57883f8ce9F2BD330286E884CfD8BB24AC4ED";
+    // const retro = await Retro.deploy(host);
+    // await retro.deployed();
+    // const badgeHolders = [addr1.address,addr2.address];
 
-    let baseNonce = provider.getTransactionCount(owner.address);
-    let nonceOffset = 0;
-    function getNonce() {
-      return baseNonce.then((nonce) => (nonce + (nonceOffset++)));
-    }
-    const Retro = await ethers.getContractFactory("Retro");
-    const host = "0x74b57883f8ce9F2BD330286E884CfD8BB24AC4ED";
-    const retro = await Retro.deploy(host);
-    await retro.deployed();
-    const badgeHolders = [addr1.address,addr2.address];
-
-    await retro.createRound("round1", badgeHolders, {value:ethers.utils.parseEther("0.1")});
-    console.log("createRound");
-    await retro.nominate(0,"nomination1", addr3.address, {value:ethers.utils.parseEther("0.005")});
-    console.log("nominate1");
-    await retro.nominate(0,"nomination2", addr4.address, {value:ethers.utils.parseEther("0.005")});
-    console.log("nominate2");
-    await retro.castVote(0,[50,50]);
-    console.log("cast1");
+    // await retro.createRound("round1", badgeHolders, {value:ethers.utils.parseEther("0.1")});
+    // console.log("createRound");
+    // await retro.nominate(0,"nomination1", addr3.address, {value:ethers.utils.parseEther("0.005")});
+    // console.log("nominate1");
+    // await retro.nominate(0,"nomination2", addr4.address, {value:ethers.utils.parseEther("0.005")});
+    // console.log("nominate2");
+    // await retro.castVote(0,[50,50]);
+    // console.log("cast1");
     // await retro.castVote(0,[20,80]);
     // console.log("cast2");
 

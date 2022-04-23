@@ -23,7 +23,7 @@ module.exports = {
   defaultNetwork: "optimism-kovan",
   etherscan: {
     apiKey: {
-      optimisticKovan: "3FUXHQBUZZAYKRA8F3YND79WJFPWMW2N3T"
+      optimisticKovan: "M663MZBQMCKRNDACGZRM4RIAG86VJ5KVQD"
     }
   },
   networks: {
