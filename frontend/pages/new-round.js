@@ -254,15 +254,26 @@ export default function NewRound() {
   async function formSubmit(event) {
     event.preventDefault();
     const {roundName, description, funding, badgeholders} = event.target.elements;
-    // const res = await ipfs.add(JSON.stringify({
-    //   roundName: roundName.value,
-    //   description: description.value
-    // }));
-    // const ipfsURI = `ipfs://${res.path}`;
-    // const metadata = JSON.stringify({
-    //   ipfsURI: ipfsURI,
-    //   recipientAddress: recipientAddress.value
-    // })
+    let lines = badgeholders.value.split("\n")
+    const splitLines = [];
+    const addressArray = [];
+    lines.forEach(element => {
+      let contents = element.split(",")
+      splitLines.push({address: contents[0].trim(), twitter: contents[1].trim()})
+      addressArray.push(contents[0].trim())
+    });
+    const res = await ipfs.add(JSON.stringify({
+      roundName: roundName.value,
+      description: description.value,
+      badgeholders: splitLines
+    }));
+    const ipfsURI = `ipfs://${res.path}`;
+    const metadata = JSON.stringify({
+      ipfsURI: ipfsURI,
+      initialPool: funding.value,
+      addresses: addressArray
+    })
+    console.log(metadata)
     // create transaction with staking
   }
 
