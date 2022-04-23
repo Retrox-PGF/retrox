@@ -2,7 +2,7 @@
 
 
 // import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 pragma solidity >=0.8.0;
 
@@ -36,7 +36,6 @@ contract Retro {
         uint256 numVotes;
     }
 
-    //Nominations[roundNum][i].numVotes
     mapping (uint256 => Round) public rounds; 
     mapping (uint256 => mapping (uint256 => Nomination)) public nominations;
 
@@ -89,7 +88,6 @@ contract Retro {
     function disperseFunds(uint roundNum) public {
         require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
         uint totalNumVotes = rounds[roundNum].totalVotes;
-        console.log(totalNumVotes);
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
             uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
             (bool sent,) = nominations[roundNum][i].recipient.call{value: amount}("");
