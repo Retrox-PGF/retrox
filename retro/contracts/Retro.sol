@@ -2,7 +2,7 @@
 
 pragma solidity >=0.8.0;
 
-abstract contract Retro {
+contract Retro {
 
     uint256 constant totalVotesPerBadgeHolder = 100;
     uint256 constant nominationDuration = 1;
@@ -58,10 +58,10 @@ abstract contract Retro {
         roundCounter++;
     }
 
-    function nominate(uint256 nominationURI) virtual public;
+    // function nominate(uint256 nominationURI) virtual public;
 
 
-    function vote(uint256 nominationURI, uint256 votePower) virtual public;
+    // function vote(uint256 nominationURI, uint256 votePower) virtual public;
 
 
 }
