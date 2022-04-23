@@ -1,10 +1,5 @@
 import { motion } from "framer-motion";
-import Head from 'next/head'
-import Link from 'next/link'
-import { nominations } from './data/nominations'
-import { rounds } from './data/rounds'
-import { useRouter } from 'next/router'
-import { useState, useEffect, useCallback } from 'react'
+
 
 /* framer motion  config
 https://codesandbox.io/s/uotor?module=/src/Example.tsx&file=/src/Example.tsx:73-349
@@ -29,6 +24,73 @@ const container = {
     }
   };
 
+
+const menuItems = [
+    {
+        name: 'Folders',
+        svg: (<svg
+        aria-hidden="true"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        className="h-6 w-6"
+        >
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+        />
+        </svg>)
+    },
+    {
+        name: 'Messages',
+        svg: (<svg
+        aria-hidden="true"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        className="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+        />
+      </svg>)
+    },
+    {
+        name: 'Documents',
+        svg: (<svg
+        aria-hidden="true"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        className="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+        />
+      </svg>)
+    }
+]
+
+const MenuItem = (item, active) => (
+<motion.a
+    variants={variantItem}
+    key={item.name}
+    href="#"
+    className="inline-flex items-center justify-center py-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg"
+>
+    <span className="sr-only">{item.name}</span>
+    {item.svg}
+</motion.a>
+)
+
 const Aside = () => (
   <motion.aside
   transition={{ duration: 0.2 }}
@@ -51,8 +113,8 @@ const Aside = () => (
 
 
         <a
-          href="/rounds"
-          className="inline-flex items-center justify-center py-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-xl"
+          href="#"
+          className="inline-flex items-center justify-center py-3 text-purple-600 bg-white rounded-lg"
         >
           <span className="sr-only">Dashboard</span>
           <svg
@@ -71,26 +133,7 @@ const Aside = () => (
           </svg>
         </a>
 
-        <a
-          href="#"
-          className="inline-flex items-center justify-center py-3 text-purple-600 bg-white rounded-xl"
-        >
-          <span className="sr-only">Dashboard</span>
-          <svg
-          aria-hidden="true"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          className="h-6 w-6"
-          >
-          <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-          />
-          </svg>
-        </a>
+        {menuItems.map(item => MenuItem(item))}
 
       </motion.nav>
       <div className="inline-flex items-center justify-center h-20 w-20 border-t border-gray-700">
@@ -162,7 +205,7 @@ const Header = () => (
   </header>
 );
 
-const Main = (props) => (
+const Main = () => (
   <motion.main
 
   transition={{ duration: 0.3, delay: 0}}
@@ -171,12 +214,11 @@ const Main = (props) => (
   className="p-6 sm:p-10 space-y-6">
     <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row justify-between">
       <div className="mr-6">
-        <h1 className="text-4xl font-semibold mb-2">{props.roundName}</h1>
+        <h1 className="text-4xl font-semibold mb-2">Round numnber</h1>
         <h2 className="text-gray-600 ml-0.5">Round information sentence?</h2>
       </div>
       <div className="flex flex-wrap items-start justify-end -mb-3">
-        <Link href='/new-nomination'>
-        <a className="inline-flex px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 rounded-xl shadow-md ml-6 mb-3">
+        <button className="inline-flex px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 rounded-xl shadow-md ml-6 mb-3">
           <svg
             aria-hidden="true"
             fill="none"
@@ -192,8 +234,7 @@ const Main = (props) => (
             />
           </svg>
           Create new nomination
-        </a>
-        </Link>
+        </button>
       </div>
     </div>
 
@@ -314,7 +355,7 @@ const Main = (props) => (
         </div>
         </div>
       </div>
-      <div className="row-span-3 md:col-span-2 bg-white rounded-xl shadow-md">
+      <div className="row-span-3 md:col-span-3 bg-white rounded-xl shadow-md">
         <div className="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100 text-xl">
           <span>Retro</span>
         </div>
@@ -327,19 +368,6 @@ const Main = (props) => (
           </p>
         </div>
       </div>
-      <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl shadow-md">
-        <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
-          Retro voting statistics
-        </div>
-        <div className="px-6 py-5 font-semibold text-lg">
-          Number of votes: 6
-        </div>
-        <div className="p-4 flex-grow">
-          <div className="flex items-center justify-center h-full px-4 py-24 text-gray-400 text-3xl font-semibold bg-gray-100 border-2 border-gray-200 border-dashed rounded-md">
-            Pie chart
-          </div>
-        </div>
-      </div>
 
     </section>
 
@@ -349,31 +377,21 @@ const Main = (props) => (
   </motion.main>
 );
 
-function Layout(props) {
+function Layout() {
   return (
     <div className="flex bg-gray-100 min-h-screen">
       <Aside></Aside>
 
       <div className="flex-grow text-gray-800">
         <Header></Header>
-        <Main roundID={props.roundID} roundName={props.roundName}></Main>
+        <Main></Main>
       </div>
     </div>
   );
 }
 
-export default function Nominations() {
-  const router = useRouter()
-  const roundID = router.query.id;
-  const round = rounds.find(o => o.id == roundID);
+export default function Home() {
   return (
-    <>
-    <Head>
-      <title>Create Next App</title>
-      <meta name="description" content="Generated by create next app" />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
-    <Layout roundID={roundID} roundName={roundID && round.name}></Layout>
-    </>
+    <Layout></Layout>
   );
 }

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { rounds } from './data/rounds'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useCallback } from 'react'
+import { create } from 'ipfs-http-client';
 
 /* framer motion  config
 https://codesandbox.io/s/uotor?module=/src/Example.tsx&file=/src/Example.tsx:73-349
@@ -51,7 +52,7 @@ const Aside = () => (
 
         <a
           href="/rounds"
-          className="inline-flex items-center justify-center py-3 text-purple-600 bg-white rounded-xl"
+          className="inline-flex items-center justify-center py-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-xl"
         >
           <span className="sr-only">Dashboard</span>
           <svg
@@ -161,21 +162,6 @@ const Header = () => (
   </header>
 );
 
-function Cards(cardClick) {
-  const cards = rounds.map((round) =>
-    <div className="flex items-center p-8 bg-white rounded-xl shadow-md hover:bg-gray-300" onClick={() => cardClick(round.id)}>
-    <div className="flex flex-col">
-      <span className="font-semibold">{round.name}</span>
-      <span className="text-gray-400">Nominations open</span>
-    </div>
-    <span className="ml-auto">19/04/2022</span>
-    </div>
-  );
-  return (
-    <>{cards}</>
-  );
-}
-
 
 const Main = (props) => (
   <motion.main
@@ -186,33 +172,47 @@ const Main = (props) => (
   className="p-6 sm:p-10 space-y-6">
     <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row justify-between">
       <div className="mr-6">
-        <h1 className="text-4xl font-semibold mb-2">Rounds</h1>
-      </div>
-      <div className="flex flex-wrap items-start justify-end -mb-3">
-        <Link href="/new-round">
-        <a className="inline-flex px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 rounded-xl shadow-md ml-6 mb-3">
-          <svg
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="flex-shrink-0 h-6 w-6 text-white -ml-1 mr-2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          Create new round
-        </a>
-        </Link>
+        <h1 className="text-4xl font-semibold mb-2">New nomination</h1>
       </div>
     </div>
 
-    <section className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-      {Cards(props.cardClick)}
+    <section className="grid md:grid-cols-2 xl:grid-cols-4 xl:grid-rows-3 xl:grid-flow-col gap-6">
+      <div className="row-span-3 col-span-4 bg-white rounded-xl shadow-md">
+        <div className="overflow-y-auto p-5">
+          <form onSubmit={props.onSubmit}>
+            <div class="grid grid-rows-2 grid-flow-col gap-4">
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Nominator name</label>
+                <input type="text" placeholder="Retro" name="nominatorName" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Project name</label>
+                <input type="text" placeholder="Retro" name="projectName" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Project URL</label>
+                <input type="url" placeholder="Retro" name="projectURL" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Project lead name</label>
+                <input type="text" placeholder="Retro" name="projectLeadName" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Project recipient address</label>
+                <input type="text" name="recipientAddress" placeholder="Retro" className="border rounded-xl p-2" maxLength='42' required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Rationale for nomination</label>
+                <textarea name="rationale" className="border rounded-xl p-2" placeholder="This is a description" rows="4" cols="50" required></textarea>
+              </div>
+            </div>
+            <div className="flex flex-col items-center mt-4">
+              <input type="submit" className="border rounded-xl p-2 bg-blue-600 text-white hover:bg-blue-400 text-lg px-4" text="Nominate"></input>
+            </div>
+          </form>
+        </div>
+      </div>
+
     </section>
 
     <section className="text-right font-semibold text-gray-500">
@@ -228,16 +228,39 @@ function Layout(props) {
 
       <div className="flex-grow text-gray-800">
         <Header></Header>
-        <Main cardClick={props.cardClick}></Main>
+        <Main onSubmit={props.onSubmit}></Main>
       </div>
     </div>
   );
 }
 
-export default function Rounds() {
-  const router = useRouter()
-  function cardClick(id) {
-    router.push('round-detail?id=' + id)
+export default function NewNomination() {
+
+  const [ipfs, setIpfs] = useState(null);
+
+  useEffect(() => {
+    setIpfs(create({
+      url: 'https://ipfs.infura.io:5001/api/v0',
+    }));
+  }, []);
+
+  async function formSubmit(event) {
+    event.preventDefault();
+    const {nominatorName, projectName, projectURL, projectLeadName, recipientAddress, rationale} = event.target.elements;
+    console.log(nominatorName.value)
+    const res = await ipfs.add(JSON.stringify({
+      nominatorName: nominatorName.value,
+      projectName: projectName.value,
+      projectURL: projectURL.value,
+      projectLeadName: projectLeadName.value,
+      rationale: rationale.value
+    }));
+    const ipfsURI = `ipfs://${res.path}`;
+    const metadata = JSON.stringify({
+      ipfsURI: ipfsURI,
+      recipientAddress: recipientAddress.value
+    })
+    // create transaction with staking
   }
 
   return (
@@ -247,7 +270,7 @@ export default function Rounds() {
       <meta name="description" content="Generated by create next app" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Layout cardClick={cardClick}></Layout>
+    <Layout onSubmit={formSubmit}></Layout>
     </>
   );
 }
