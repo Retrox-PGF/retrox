@@ -6,7 +6,39 @@ import { useRouter } from 'next/router'
 import { useState, useEffect, useCallback } from 'react'
 const siwe = require('siwe');
 import { ethers } from 'ethers'
-const nominationsData = require('../data/csvjson.json');
+const unorderedNominationsData = require('../data/optimismNominations.json');
+const optimismVoteData = require('../data/optimismVotes.json');
+import {Doughnut} from 'react-chartjs-2';
+import {Chart, ArcElement} from 'chart.js'
+Chart.register(ArcElement);
+const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
+
+function createColor() {
+  let n = (Math.random() * 0xfffff * 1000000).toString(16);
+  return '#' + n.slice(0, 6);
+}
+
+function createDoughnutData(project, legend) {
+  if (project === undefined) {
+    project = [];
+  }
+  const returnData = {
+    labels: [],
+  datasets: [{
+    data: [],
+    backgroundColor: [],
+    hoverBackgroundColor: []
+  }]};
+  for (const [key, value] of Object.entries(project)) {
+    if (value != null) {
+      returnData.datasets[0].data.push(value);
+      returnData.labels.push(legend[key]);
+      returnData.datasets[0].backgroundColor.push(createColor());
+      returnData.datasets[0].hoverBackgroundColor.push(createColor());
+    }
+  }
+  return returnData;
+}
 
 const domain = "localhost";
 const origin = "https://localhost/login";
@@ -175,14 +207,14 @@ const Header = (props) => (
   </header>
 );
 
-function NominationsRow(onCardClick) {
-  const nominations = nominationsData.map((nomination) =>
+function NominationsRow(onCardClick, selectedNomination, nominationData, voteData) {
+  const nominations = nominationData.map((nomination) =>
   <li className="flex items-center hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-700 p-2 rounded-xl hover:text-white group" onClick={() => onCardClick(nomination.id)} key={nomination.id}>
     <div className="flex flex-col">
-    <span className="font-semibold">{nomination.projectName}</span>
-    <span className="text-gray-600 group-hover:text-gray-200">{nomination.rationale.slice(0,25) + '...'}</span>
+    <span className="font-semibold">{nomination.projectName.slice(0,20).trim() + (nomination.projectName.length > 20 ? '...' : '')}</span>
+    <span className="text-gray-600 group-hover:text-gray-200">{nomination.rationale.slice(0,25).trim() + (nomination.rationale.length > 25 ? '...' : "")}</span>
     </div>
-    <span className="ml-auto font-semibold">{nomination.id} votes</span>
+    <span className="ml-auto font-semibold">{voteData[nomination.projectName] ? voteData[nomination.projectName][Object.keys(voteData.Badgeholder).length - 4] : 0} votes</span>
   </li>
   );
   return (
@@ -244,7 +276,7 @@ const Main = (props) => (
           </svg>
         </div>
         <div>
-          <span className="block text-2xl font-bold">{nominationsData.length}</span>
+          <span className="block text-2xl font-bold">{props.nominationData.length}</span>
           <span className="block text-gray-500">Nominations</span>
         </div>
       </div>
@@ -288,7 +320,7 @@ const Main = (props) => (
           </svg>
         </div>
         <div>
-          <span className="inline-block text-2xl font-bold">30</span>
+          <span className="inline-block text-2xl font-bold">{Object.keys(props.voteData.Badgeholder).length - 4}</span>
           <span className="block text-gray-500">Badgeholders</span>
         </div>
       </div>
@@ -324,14 +356,14 @@ const Main = (props) => (
         <div className="p-4 flex-grow">
         <div className="overflow-y-auto" style={{ maxHeight: "24rem" }}>
           <ul className="p-3">
-            {NominationsRow(props.selectNomination)}
+            {NominationsRow(props.selectNomination, props.nomination, props.nominationData, props.voteData)}
           </ul>
         </div>
         </div>
       </div>
       <div className="row-span-3 md:col-span-2 bg-white rounded-xl shadow-md" style={{ maxHeight: "30rem" }}>
         <div className="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100 text-xl">
-          <span>{props.nomination && props.nomination.projectName}</span>
+          <span>{props.nomination ? props.nomination.projectName : 'Click on nomination to view details'}</span>
         </div>
         <div className="overflow-y-auto p-5" style={{ maxHeight: "24rem" }}>
           {props.nomination ?
@@ -354,16 +386,29 @@ const Main = (props) => (
       </div>
       <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl shadow-md">
         <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
-          {props.nomination ? props.nomination.projectName + " voting statistics" : null}
+          Voting Statistics
         </div>
-        <div className="px-6 py-5 font-semibold text-lg">
-          Number of votes: {props.nomination ? props.nomination.id : null}
-        </div>
-        <div className="p-4 flex-grow">
-          <div className="flex items-center justify-center h-full px-4 py-24 text-gray-400 text-3xl font-semibold bg-gray-100 border-2 border-gray-200 border-dashed rounded-md">
-            Pie chart
+        <div className="grid grid-rows-2 grid-flow-col">
+          <div className="px-6 py-2 text-lg">
+            {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 4] : 0} votes
+          </div>
+          <div className="px-6 py-2 text-lg">
+            {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 3] : 0} of votes
+          </div>
+          <div className="px-6 py-2 text-lg">
+            {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} awarded
           </div>
         </div>
+        {props.voteData[props.nomination.projectName] ?
+        <div className="p-4 flex-grow">
+          <div className="flex items-center justify-center p-2 text-gray-400 text-3xl font-semibold bg-gray-100 border-2 border-gray-200 border-dashed rounded-md">
+            <div className='w-4/5 h-2/5'>
+              <Doughnut data={createDoughnutData(props.voteData[props.nomination.projectName], props.voteData.Badgeholder)} width={400} height={400}/>
+            </div>
+          </div>
+          <div className="mt-2 text-center">Distribution of votes</div>
+        </div>
+        : null}
       </div>
 
     </section>
@@ -381,7 +426,7 @@ function Layout(props) {
 
       <div className="flex-grow text-gray-800">
         <Header signIn={props.signIn} address={props.address}></Header>
-        <Main roundID={props.roundID} roundName={props.roundName} nomination={props.nomination} selectNomination={props.selectNomination}></Main>
+        <Main roundID={props.roundID} roundName={props.roundName} nomination={props.nomination} selectNomination={props.selectNomination} nominationData={props.nominationData} voteData={props.voteData}></Main>
       </div>
     </div>
   );
@@ -389,7 +434,8 @@ function Layout(props) {
 
 export default function Nominations() {
   const [address, setAddress] = useState('');
-  const [nomination, setNomination] = useState(null);
+  const [nomination, setNomination] = useState(1);
+
 
   const router = useRouter()
   const roundID = router.query.id;
@@ -424,7 +470,7 @@ export default function Nominations() {
       <meta name="description" content="Generated by create next app" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)}></Layout>
+    <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)} nominationData={nominationsData} voteData={optimismVoteData}></Layout>
     </>
   );
 }
