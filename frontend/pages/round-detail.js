@@ -532,12 +532,14 @@ export default function Nominations() {
 
   function updateVote(index, plus) {
     const modBallot = ballot;
-    if (plus && votesRemaining != 0) {
-      setVotesRemaining(votesRemaining - 1);
+
+    if (plus && (votesRemaining - ((modBallot[index] + 1)*(modBallot[index] + 1) - (modBallot[index])*(modBallot[index]))) >= 0) {
+      console.log(modBallot)
+      setVotesRemaining(votesRemaining - ((modBallot[index] + 1)*(modBallot[index] + 1) - (modBallot[index])*(modBallot[index])));
       modBallot[index]++;
     } else if (!plus && votesRemaining != 100) {
-      setVotesRemaining(votesRemaining + 1);
       if (modBallot[index] != 0) {
+        setVotesRemaining(votesRemaining + ((modBallot[index])*(modBallot[index]) - (modBallot[index]-1)*(modBallot[index]-1)));
         modBallot[index]--;
       }
     }
@@ -558,7 +560,7 @@ export default function Nominations() {
   }
 
   async function checkVotingState() {
-    return 2;
+    return 1;
   }
 
   const router = useRouter()
