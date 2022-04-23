@@ -363,7 +363,7 @@ const Main = (props) => (
         </div>
         </div>
       </div>
-      <div className={`row-span-3 md:col-span-${props.votingState == 0 || (props.votingState == 1 && props.canVote == false) ? "3": "2"} bg-white rounded-xl shadow-md`} style={{ maxHeight: "30rem" }}>
+      <div className={`row-span-3 md:col-span-3 bg-white rounded-xl shadow-md`} style={{ maxHeight: "30rem" }}>
         <div className="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100 text-xl">
           <span>{props.nomination ? props.nomination.projectName : 'Click on nomination to view details'}</span>
         </div>
@@ -387,20 +387,22 @@ const Main = (props) => (
         </div>
       </div>
       {props.votingState == 1 && props.canVote ?
-        <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl shadow-md">
+        <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl justify-between py-2 shadow-md overflow-auto h-96">
           <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
             Cast your vote {props.votesRemaining}
           </div>
-          <div className="grid grid-rows-2 grid-flow-col">
+          <div className="flex flex-col overflow-auto">
             {Object.keys(props.votedOnObject).map((obj, i) => (
-              <div className="px-6 py-2 text-lg">
+              <div className="px-3 py-1 text-lg">
+                <button className="text-blue-500 hover:text-blue-800" onClick={() => props.selectNomination(parseInt(obj) + 1)}>
                 {props.nominationData.find(o => o.id == parseInt(obj) + 1).projectName}: {props.votedOnObject[obj]} votes
+                </button>
               </div>
             ))}
           </div>
-          <div className="flex flex-row">
-            <button onClick={() => props.updateVote(props.nomination.id - 1, true)}>Plus</button>
-            <button onClick={() => props.updateVote(props.nomination.id - 1, false)}>Minus</button>
+          <div className="flex flex-row items-center justify-center mt-2 border-t py-3">
+            <button onClick={() => props.updateVote(props.nomination.id - 1, false)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">-</button>
+            <button onClick={() => props.updateVote(props.nomination.id - 1, true)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">+</button>
           </div>
         </div>
 
@@ -471,9 +473,9 @@ export default function Nominations() {
     if (plus && votesRemaining != 0) {
       setVotesRemaining(votesRemaining - 1);
       modBallot[index]++;
-    } else if (votesRemaining != 100) {
+    } else if (!plus && votesRemaining != 100) {
       setVotesRemaining(votesRemaining + 1);
-      if (modBallot[index] - 1 != 0) {
+      if (modBallot[index] != 0) {
         modBallot[index]--;
       }
     }
