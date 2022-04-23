@@ -18,6 +18,8 @@ function createColor() {
   return '#' + n.slice(0, 6);
 }
 
+
+
 function createDoughnutData(project, legend) {
   if (project === undefined) {
     project = [];
@@ -361,7 +363,7 @@ const Main = (props) => (
         </div>
         </div>
       </div>
-      <div className="row-span-3 md:col-span-2 bg-white rounded-xl shadow-md" style={{ maxHeight: "30rem" }}>
+      <div className={`row-span-3 md:col-span-3 bg-white rounded-xl shadow-md`} style={{ maxHeight: "30rem" }}>
         <div className="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100 text-xl">
           <span>{props.nomination ? props.nomination.projectName : 'Click on nomination to view details'}</span>
         </div>
@@ -384,32 +386,56 @@ const Main = (props) => (
           null}
         </div>
       </div>
-      <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl shadow-md">
-        <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
-          Voting Statistics
+      {props.votingState == 1 && props.canVote ?
+        <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl justify-between py-2 shadow-md overflow-auto h-96">
+          <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
+            Cast your vote {props.votesRemaining}
+          </div>
+          <div className="flex flex-col overflow-auto">
+            {Object.keys(props.votedOnObject).map((obj, i) => (
+              <div className="px-3 py-1 text-lg">
+                <button className="text-blue-500 hover:text-blue-800" onClick={() => props.selectNomination(parseInt(obj) + 1)}>
+                {props.nominationData.find(o => o.id == parseInt(obj) + 1).projectName}: {props.votedOnObject[obj]} votes
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-row items-center justify-center mt-2 border-t py-3">
+            <button onClick={() => props.updateVote(props.nomination.id - 1, false)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">-</button>
+            <button onClick={() => props.updateVote(props.nomination.id - 1, true)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">+</button>
+          </div>
         </div>
-        <div className="grid grid-rows-2 grid-flow-col">
-          <div className="px-6 py-2 text-lg">
-            {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 4] : 0} votes
+
+          :
+        props.votingState == 2 ?
+        <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl shadow-md">
+          <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
+            Voting Statistics
           </div>
-          <div className="px-6 py-2 text-lg">
-            {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 3] : 0} of votes
-          </div>
-          <div className="px-6 py-2 text-lg">
-            {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} awarded
-          </div>
-        </div>
-        {props.voteData[props.nomination.projectName] ?
-        <div className="p-4 flex-grow">
-          <div className="flex items-center justify-center p-2 text-gray-400 text-3xl font-semibold bg-gray-100 border-2 border-gray-200 border-dashed rounded-md">
-            <div className='w-4/5 h-2/5'>
-              <Doughnut data={createDoughnutData(props.voteData[props.nomination.projectName], props.voteData.Badgeholder)} width={400} height={400}/>
+          <div className="grid grid-rows-2 grid-flow-col">
+            <div className="px-6 py-2 text-lg">
+              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 4] : 0} votes
+            </div>
+            <div className="px-6 py-2 text-lg">
+              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 3] : 0} of votes
+            </div>
+            <div className="px-6 py-2 text-lg">
+              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} awarded
             </div>
           </div>
-          <div className="mt-2 text-center">Distribution of votes</div>
+          {props.voteData[props.nomination.projectName] ?
+          <div className="p-4 flex-grow">
+            <div className="flex items-center justify-center p-2 text-gray-400 text-3xl font-semibold bg-gray-100 border-2 border-gray-200 border-dashed rounded-md">
+              <div className='w-4/5 h-2/5'>
+                <Doughnut data={createDoughnutData(props.voteData[props.nomination.projectName], props.voteData.Badgeholder)} width={400} height={400}/>
+              </div>
+            </div>
+            <div className="mt-2 text-center">Distribution of votes</div>
+          </div> :null }
         </div>
-        : null}
-      </div>
+        :
+        null
+      }
 
     </section>
 
@@ -426,16 +452,52 @@ function Layout(props) {
 
       <div className="flex-grow text-gray-800">
         <Header signIn={props.signIn} address={props.address}></Header>
-        <Main roundID={props.roundID} roundName={props.roundName} nomination={props.nomination} selectNomination={props.selectNomination} nominationData={props.nominationData} voteData={props.voteData}></Main>
+        <Main roundID={props.roundID} roundName={props.roundName} nomination={props.nomination} selectNomination={props.selectNomination} nominationData={props.nominationData} voteData={props.voteData} canVote={props.canVote} votingState={props.votingState} updateVote={props.updateVote} votesRemaining={props.votesRemaining} votedOnObject={props.votedOnObject}></Main>
       </div>
     </div>
   );
 }
 
 export default function Nominations() {
+  const N = 106
   const [address, setAddress] = useState('');
   const [nomination, setNomination] = useState(1);
+  const [votesRemaining, setVotesRemaining] = useState(0);
+  const [ballot, setBallot] = useState(Array(nominationsData.length).fill(0));
+  const [canVote, setCanVote] = useState(false);
+  const [votingState, setVotingState] = useState(0);
+  const [votedOnObject, setVotedOnObject] = useState({});
 
+  function updateVote(index, plus) {
+    const modBallot = ballot;
+    if (plus && votesRemaining != 0) {
+      setVotesRemaining(votesRemaining - 1);
+      modBallot[index]++;
+    } else if (!plus && votesRemaining != 100) {
+      setVotesRemaining(votesRemaining + 1);
+      if (modBallot[index] != 0) {
+        modBallot[index]--;
+      }
+    }
+    setBallot(modBallot);
+    getVotes(modBallot);
+  }
+
+  async function checkCanVote(address) {
+    // hasn't voted (need contract communication)
+    const hasntVoted = true;
+
+    // is whitelisted (need contract communication)
+    const badgeHolders = ['0x']
+    // const isWhitelisted = badgeHolders.includes(address)
+    const isWhitelisted = true;
+
+    return hasntVoted && isWhitelisted;
+  }
+
+  async function checkVotingState() {
+    return 1;
+  }
 
   const router = useRouter()
   const roundID = router.query.id;
@@ -459,9 +521,41 @@ export default function Nominations() {
     setAddress(address);
   }
 
+  function getVotes(ballot) {
+    const votesObject = {};
+    ballot.forEach((element, i) => {
+      if (element) {
+        votesObject[i] = element;
+      }
+    })
+    console.log(votesObject)
+    setVotedOnObject(votesObject);
+  }
+
   useEffect(() => {
     setAddress(window.localStorage.getItem("userAddress"))
   }, []);
+
+  useEffect(() => {
+    async function foo() {
+      const votingState = await checkVotingState();
+      if (votingState == 1) {
+        const vote = await checkCanVote(address);
+        console.log(vote)
+        setVotingState(votingState);
+        setCanVote(vote);
+
+        if (!vote) {
+          return;
+        }
+
+        setVotesRemaining(100);
+      } else if (votingState == 2) {
+        setVotingState(votingState);
+      }
+    }
+    foo();
+  }, [])
 
   return (
     <>
@@ -470,7 +564,7 @@ export default function Nominations() {
       <meta name="description" content="Generated by create next app" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)} nominationData={nominationsData} voteData={optimismVoteData}></Layout>
+    <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)} nominationData={nominationsData} voteData={optimismVoteData} canVote={canVote} votingState={votingState} updateVote={updateVote} votesRemaining={votesRemaining} votedOnObject={votedOnObject}></Layout>
     </>
   );
 }
