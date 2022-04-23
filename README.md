@@ -1,4 +1,4 @@
-# RPGF - Retro
+# RPGF - Retr0x
 
 Retro is an integral pillar of an entirely new regenerative crypto-economic paradigm which will aim to optimally distribute funds to the projects which add the most value to humanity. We have built a fully transparent and on-chain platform deployed on Optimism for retroactive public goods funding, as well as future streaming of funds with quadratic voting logic and data visualization for funds which have been disbursed. Public goods are by definition non-excludable and non-rivalrous and are often chronically underfunded and supported. The examples are vast and include things like open software, information, fresh air, privacy or roundational research. These are used by all but underappreciated by many. It is often difficult to predict which sort of public good projects will amass the largest amount of positive externality and should be funded the most and thus a new funding framework was recently proposed by Vitalik (https://medium.com/ethereum-optimism/retroactive-public-goods-funding-33c9b7d00f0c). The simple idea is that is is in fact much easier to designate what has been useful in the past.
 
