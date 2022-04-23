@@ -17,7 +17,7 @@ export default function Home() {
         </h1>
 
         <Link href="/rounds">
-          <a class="bg-gradient-to-r from-purple-600 to-blue-800 text-white p-4 rounded-2xl mt-4 font-large">Launch app</a>
+          <a className="bg-gradient-to-r from-purple-600 to-blue-800 text-white p-4 rounded-2xl mt-4 font-large">Launch app</a>
         </Link>
 
       </main>
