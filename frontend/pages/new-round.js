@@ -4,10 +4,25 @@ import Link from 'next/link'
 import { rounds } from './data/rounds'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useCallback } from 'react'
+import { create } from 'ipfs-http-client';
+const siwe = require('siwe');
+import { ethers } from 'ethers'
 
-/* framer motion  config
-https://codesandbox.io/s/uotor?module=/src/Example.tsx&file=/src/Example.tsx:73-349
-*/
+const domain = "localhost";
+const origin = "https://localhost/login";
+
+function createSiweMessage (address, statement) {
+  const siweMessage = new siwe.SiweMessage({
+    domain,
+    address,
+    statement,
+    uri: origin,
+    version: '1',
+    chainId: '1'
+  });
+  return siweMessage.prepareMessage();
+}
+
 const container = {
     hidden: { opacity: 1, scale: 0 },
     visible: {
@@ -51,7 +66,7 @@ const Aside = () => (
 
         <a
           href="/rounds"
-          className="inline-flex items-center justify-center py-3 text-purple-600 bg-white rounded-xl"
+          className="inline-flex items-center justify-center py-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-xl"
         >
           <span className="sr-only">Dashboard</span>
           <svg
@@ -121,7 +136,7 @@ const Aside = () => (
   </motion.aside>
 );
 
-const Header = () => (
+const Header = (props) => (
   <header className="flex items-center h-20 px-6 sm:px-10 bg-white">
     <button className="block sm:hidden relative flex-shrink-0 p-2 mr-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800 focus:bg-gray-100 focus:text-gray-800 rounded-full">
       <span className="sr-only">Menu</span>
@@ -149,32 +164,17 @@ const Header = () => (
       />
     </div>
     <div className="flex flex-shrink-0 items-center ml-auto">
-      <button className="inline-flex items-center p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg">
+      <button className="inline-flex items-center p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg" onClick={props.address ? null : () => props.signIn()}>
         <span className="sr-only">User Menu</span>
         <div className="hidden md:flex md:flex-col md:items-end md:leading-tight">
-          <span className="font-semibold">0xffff...ffff</span>
-          <span className="text-sm text-gray-600">Connected</span>
+          <span className="font-semibold">{props.address ? props.address.slice(0, 6) + '...' + props.address.slice(38): 'Connect wallet'}</span>
+          <span className="text-sm text-gray-600">{props.address ? 'Connected' : null}</span>
         </div>
       </button>
 
     </div>
   </header>
 );
-
-function Cards(cardClick) {
-  const cards = rounds.map((round) =>
-    <div className="flex items-center p-8 bg-white rounded-xl shadow-md hover:bg-gray-300" onClick={() => cardClick(round.id)}>
-    <div className="flex flex-col">
-      <span className="font-semibold">{round.name}</span>
-      <span className="text-gray-400">Nominations open</span>
-    </div>
-    <span className="ml-auto">19/04/2022</span>
-    </div>
-  );
-  return (
-    <>{cards}</>
-  );
-}
 
 
 const Main = (props) => (
@@ -186,33 +186,39 @@ const Main = (props) => (
   className="p-6 sm:p-10 space-y-6">
     <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row justify-between">
       <div className="mr-6">
-        <h1 className="text-4xl font-semibold mb-2">Rounds</h1>
-      </div>
-      <div className="flex flex-wrap items-start justify-end -mb-3">
-        <Link href="/new-round">
-        <a className="inline-flex px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 rounded-xl shadow-md ml-6 mb-3">
-          <svg
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="flex-shrink-0 h-6 w-6 text-white -ml-1 mr-2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          Create new round
-        </a>
-        </Link>
+        <h1 className="text-4xl font-semibold mb-2">New round</h1>
       </div>
     </div>
 
-    <section className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-      {Cards(props.cardClick)}
+    <section className="grid md:grid-cols-2 xl:grid-cols-4 xl:grid-rows-3 xl:grid-flow-col gap-6">
+      <div className="row-span-3 col-span-4 bg-white rounded-xl shadow-md">
+        <div className="overflow-y-auto p-5">
+          <form onSubmit={props.onSubmit}>
+            <div class="grid grid-rows-2 grid-flow-col gap-4">
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Round name</label>
+                <input type="text" placeholder="Retro" name="roundName" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Short description</label>
+                <input type="text" placeholder="Retro" name="description" className="border rounded-xl p-2" required maxLength="400"></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Initial funding amount (in eth)</label>
+                <input type="number" placeholder="Retro" name="funding" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Badgeholders (as a CSV file)</label>
+                <input type="file" name="badgeholders" className="mt-2 ml-2" accept=".csv" required></input>
+              </div>
+            </div>
+            <div className="flex flex-col items-center mt-4">
+              <input type="submit" className="border rounded-xl p-2 bg-blue-600 text-white hover:bg-blue-400 text-lg px-4" text="Create round"></input>
+            </div>
+          </form>
+        </div>
+      </div>
+
     </section>
 
     <section className="text-right font-semibold text-gray-500">
@@ -227,18 +233,55 @@ function Layout(props) {
       <Aside></Aside>
 
       <div className="flex-grow text-gray-800">
-        <Header></Header>
-        <Main cardClick={props.cardClick}></Main>
+      <Header signIn={props.signIn} address={props.address}></Header>
+        <Main onSubmit={props.onSubmit}></Main>
       </div>
     </div>
   );
 }
 
-export default function Rounds() {
-  const router = useRouter()
-  function cardClick(id) {
-    router.push('round-detail?id=' + id)
+export default function NewRound() {
+  const [address, setAddress] = useState('');
+  const [ipfs, setIpfs] = useState(null);
+
+  useEffect(() => {
+    setIpfs(create({
+      url: 'https://ipfs.infura.io:5001/api/v0',
+    }));
+  }, []);
+
+  async function formSubmit(event) {
+    event.preventDefault();
+    const {roundName, description, funding, badgeholders} = event.target.elements;
+    const res = await ipfs.add(JSON.stringify({
+      roundName: roundName.value,
+      description: description.value
+    }));
+    const ipfsURI = `ipfs://${res.path}`;
+    const metadata = JSON.stringify({
+      ipfsURI: ipfsURI,
+      recipientAddress: recipientAddress.value
+    })
+    // create transaction with staking
   }
+
+  async function logIn() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await ethereum.request({method: 'eth_requestAccounts'});
+    const signer = provider.getSigner();
+    const address = await signer.getAddress()
+    const signedMessage = await signer.signMessage(createSiweMessage(
+      address,
+      "Welcome to Retro."
+    ));
+    window.localStorage.setItem('signedMessage', signedMessage);
+    window.localStorage.setItem('userAddress', address)
+    setAddress(address);
+  }
+
+  useEffect(() => {
+    setAddress(window.localStorage.getItem("userAddress"))
+  });
 
   return (
     <>
@@ -247,7 +290,7 @@ export default function Rounds() {
       <meta name="description" content="Generated by create next app" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Layout cardClick={cardClick}></Layout>
+    <Layout onSubmit={formSubmit} signIn={logIn} address={address}></Layout>
     </>
   );
 }
