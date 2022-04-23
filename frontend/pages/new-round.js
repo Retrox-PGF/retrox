@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { create } from 'ipfs-http-client';
 const siwe = require('siwe');
 import { ethers } from 'ethers'
+import fs from "fs"
 
 const domain = "localhost";
 const origin = "https://localhost/login";
@@ -250,6 +251,19 @@ export default function NewRound() {
     }));
   }, []);
 
+
+  function csvJSON(file){
+    const csvfile=fs.readFileSync(file)
+    var lines = csvfile.split("\n")
+    lines.forEach(element => {
+      let contents = element.split(",")
+      return {
+        address: contents[0].trim(),
+        twitter: contents[1].trim()
+      }
+    }); 
+    return lines
+  }
   async function formSubmit(event) {
     event.preventDefault();
     const {roundName, description, funding, badgeholders} = event.target.elements;
@@ -262,6 +276,7 @@ export default function NewRound() {
       ipfsURI: ipfsURI,
       recipientAddress: recipientAddress.value
     })
+    const badgeholdermdata = csvJSON(badgeholders)
     // create transaction with staking
   }
 
