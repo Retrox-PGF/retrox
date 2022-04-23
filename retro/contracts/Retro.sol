@@ -2,6 +2,7 @@
 
 
 // import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "hardhat/console.sol";
 
 pragma solidity >=0.8.0;
 
@@ -44,6 +45,7 @@ contract Retro {
     event NewRound(string roundURI, uint256 startBlockTimestamp, uint256 fundsCommitted);
     event NewNomination(uint256 roundNum, string nominationURI, address recipient);
     event NewVote(uint256 roundNum, address badgeHolder);
+    event Disperse(address indexed recipient, uint256 amount);
 
     function createRound(string memory roundURI, address[] memory badgeHolders) public payable {
         require(msg.value >= minRoundCreationThreshold, "Insufficient funds to create a new round");
@@ -57,6 +59,7 @@ contract Retro {
 
     function nominate(uint256 roundNum, string memory nominationURI, address recipient) public payable {
         require(msg.value >= minNominationThreshold, "Insufficient funds to nominate");
+        // check nomination period is valid
         Round storage round = rounds[roundNum];
         nominations[roundNum][round.nominationCounter].nominationURI = nominationURI;
         nominations[roundNum][round.nominationCounter].recipient = recipient;
@@ -66,6 +69,7 @@ contract Retro {
     }
 
     function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
+        // check voting period is valid for the round
         Round memory round = rounds[roundNum];
         uint256 tokenSum;
         for (uint256 i = 0; i < round.nominationCounter; i++) {
@@ -76,6 +80,18 @@ contract Retro {
         }
         require(tokenSum == tokensPerBadgeHolder, "Incorrect total number of tokens");
         emit NewVote(roundNum, msg.sender);
+    }
+
+    function disperseFunds(uint roundNum) public {
+        console.log("test");
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
+        uint totalNumVotes = tokensPerBadgeHolder * rounds[roundNum].badgeHolders.length;
+        for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
+            uint amount = (nominations[roundNum][i].numVotes / totalNumVotes) * rounds[roundNum].fundsCommitted;
+            (bool sent,) = nominations[roundNum][i].recipient.call{value: amount}("");
+            require(sent, 'Failed to send');
+            emit Disperse(nominations[roundNum][i].recipient, amount);
+        }
     }
 
     /// @notice Calculates the square root of x, rounding down.
@@ -134,6 +150,14 @@ contract Retro {
             uint256 roundedDownResult = x / result;
             return result >= roundedDownResult ? roundedDownResult : result;
         }
+    }
+
+    function getRoundData(uint256 roundNum) public view returns (Round memory) {
+        return rounds[roundNum];
+    }
+
+    function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (Nomination memory) {
+        return nominations[roundNum][nominationNum];
     }
 
 }
