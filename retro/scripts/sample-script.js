@@ -15,7 +15,8 @@ async function main() {
 
   // We get the contract to deploy
   const Retro = await hre.ethers.getContractFactory("Retro");
-  const retro = await Retro.deploy();
+  const host = "0x74b57883f8ce9F2BD330286E884CfD8BB24AC4ED";
+  const retro = await Retro.deploy(host);
 
   await retro.deployed();
 
