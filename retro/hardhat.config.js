@@ -31,10 +31,8 @@ module.exports = {
       url: API_KOVAN,
       accounts: [PRIVATE_KEY_KOVAN]
     },
-    // for the local dev environment
-    //'optimism-local': {
-    //  url: "http://localhost:8545",
-    //  accounts: [PRIVATE_KEY_LOCAL]
-    //},
+    'optimism-local': {
+     url: "http://localhost:8545"
+    },
   },
 };
