@@ -12,7 +12,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-const { API_MAIN, API_KOVAN, PRIVATE_KEY_KOVAN, PRIVATE_KEY_LOCAL, PRIVATE_KEY_MAIN, ETHERSCAN_API_KEY} = process.env;
+const { API_MAIN, API_KOVAN, PRIVATE_KEY_KOVAN, PRIVATE_KEY_LOCAL, PRIVATE_KEY_MAIN, ETHERSCAN_API_KEY, PRIVATE_KEY_1,PRIVATE_KEY_2,PRIVATE_KEY_3,PRIVATE_KEY_4,PRIVATE_KEY_5} = process.env;
 
 // environment variables for private keys and API links are defined using .env file
 /**
@@ -35,7 +35,8 @@ module.exports = {
     // for testnet
     'optimism-kovan': {
       url: API_KOVAN,
-      accounts: [PRIVATE_KEY_KOVAN]
+      accounts: [PRIVATE_KEY_1,PRIVATE_KEY_2,PRIVATE_KEY_3,PRIVATE_KEY_4,PRIVATE_KEY_5],
+      gas: 9000000
     },
     'optimism-local': {
      url: "http://localhost:8545"
