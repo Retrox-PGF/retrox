@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.8.0;
 
+// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "hardhat/console.sol";
+
+pragma solidity >=0.8.0;
 
 contract Retro {
 
     uint256 constant tokensPerBadgeHolder = 100;
     uint256 constant nominationDuration = 0;
     uint256 constant votingDuration = 0;
-    uint256 private funds;
+    uint256 constant minRoundCreationThreshold = 1;
+    uint256 constant minNominationThreshold = 1; 
 
     enum RoundState {
         Nominations,
@@ -23,9 +26,8 @@ contract Retro {
         address[] badgeHolders;
         uint256 startBlockTimestamp;
         uint256 fundsCommitted;
-        uint256 votePowerTotal; 
         uint256 nominationCounter;
-        
+        uint256 totalVotes;
     }
 
     struct Nomination {
@@ -41,46 +43,60 @@ contract Retro {
     uint256 public roundCounter;
 
     event RetroSetup(address indexed initiator);
-
     event NewRound(string roundURI, uint256 startBlockTimestamp, uint256 fundsCommitted);
-    event NewNomination(string nominationURI, address recipient);
-    event Disperse(address indexed, uint256);
+    event NewNomination(uint256 roundNum, string nominationURI, address recipient);
     event NewVote(uint256 roundNum, address badgeHolder);
+    event Disperse(address indexed recipient, uint256 amount);
 
-    // Only the safe owners can create a new round.
-    function createRound(string memory roundURI, address[] memory badgeHolders, uint256 fundsCommitted) public {
-
+    function createRound(string memory roundURI, address[] memory badgeHolders) public payable {
+        require(msg.value >= minRoundCreationThreshold, "Insufficient funds to create a new round");
         rounds[roundCounter].roundURI = roundURI;
         rounds[roundCounter].badgeHolders = badgeHolders;
         rounds[roundCounter].startBlockTimestamp = block.timestamp;
-        rounds[roundCounter].fundsCommitted = fundsCommitted;
+        rounds[roundCounter].fundsCommitted = msg.value;
         roundCounter++;
-        emit NewRound(roundURI, block.timestamp, fundsCommitted);
+        emit NewRound(roundURI, block.timestamp, msg.value);
     }
 
-    function nominate(uint256 roundNum, string memory nominationURI, address recipient) public {
-        //check nomination is valid 
-        Round memory round = rounds[roundNum];
+    function nominate(uint256 roundNum, string memory nominationURI, address recipient) public payable {
+        require(msg.value >= minNominationThreshold, "Insufficient funds to nominate");
+        // check nomination period is valid
+        Round storage round = rounds[roundNum];
         nominations[roundNum][round.nominationCounter].nominationURI = nominationURI;
         nominations[roundNum][round.nominationCounter].recipient = recipient;
+        rounds[roundCounter].fundsCommitted += msg.value;
         round.nominationCounter++;
-        emit NewNomination(nominationURI, recipient);
+        emit NewNomination(roundNum, nominationURI, recipient);
     }
 
     function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
-            Round memory round = rounds[roundNum];
-            uint256 tokenSum;
-            for (uint256 i = 0; i < round.nominationCounter; i++) {
-                Nomination storage nomination = nominations[roundNum][i];
-                uint256 votePower = sqrt(tokenAllocations[i]); // QV vote 
-                nomination.numVotes += votePower;
-                console.log("token allocation");
-                console.log(tokenAllocations[i]);
-                tokenSum += tokenAllocations[i];
-            }
-            require(tokenSum == tokensPerBadgeHolder, "Incorrect total number of tokens");
-            emit NewVote(roundNum, msg.sender);
+        // check voting period is valid for the round
+        Round storage round = rounds[roundNum];
+        uint256 tokenSum;
+        uint256 votePowerSum;
+        for (uint256 i = 0; i < round.nominationCounter; i++) {
+            Nomination storage nomination = nominations[roundNum][i];
+            uint256 votePower = sqrt(tokenAllocations[i]); // QV vote 
+            nomination.numVotes += votePower;
+            votePowerSum += votePower;
+            tokenSum += tokenAllocations[i];
         }
+        require(tokenSum == tokensPerBadgeHolder, "Incorrect total number of tokens");
+        round.totalVotes += votePowerSum;
+        emit NewVote(roundNum, msg.sender);
+    }
+
+    function disperseFunds(uint roundNum) public {
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
+        uint totalNumVotes = rounds[roundNum].totalVotes;
+        console.log(totalNumVotes);
+        for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
+            uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
+            (bool sent,) = nominations[roundNum][i].recipient.call{value: amount}("");
+            require(sent, 'Failed to send');
+            emit Disperse(nominations[roundNum][i].recipient, amount);
+        }
+    }
 
     /// @notice Calculates the square root of x, rounding down.
     /// @dev Uses the Babylonian method https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method.
@@ -140,18 +156,12 @@ contract Retro {
         }
     }
 
-    function disperseFunds(uint roundNum) public {
-        console.log("test");
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
-        uint totalNumVotes = tokensPerBadgeHolder * rounds[roundNum].badgeHolders.length;
-        for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
-            uint amount = (nominations[roundNum][i].numVotes / totalNumVotes) * funds;
-            (bool sent,) = nominations[roundNum][i].recipient.call{value: amount}("");
-            require(sent, 'Failed to send');
-            emit Disperse(nominations[roundNum][i].recipient, amount);
-        }
-
+    function getRoundData(uint256 roundNum) public view returns (Round memory) {
+        return rounds[roundNum];
     }
 
+    function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (Nomination memory) {
+        return nominations[roundNum][nominationNum];
+    }
 
 }
