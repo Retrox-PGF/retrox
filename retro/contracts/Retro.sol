@@ -2,15 +2,15 @@
 
 
 // import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 pragma solidity >=0.8.0;
 
 contract Retro {
 
     uint256 constant tokensPerBadgeHolder = 100;
-    uint256 constant nominationDuration = 1;
-    uint256 constant votingDuration = 1;
+    uint256 constant nominationDuration = 0;
+    uint256 constant votingDuration = 0;
     uint256 constant minRoundCreationThreshold = 1;
     uint256 constant minNominationThreshold = 1; 
 
@@ -27,6 +27,7 @@ contract Retro {
         uint256 startBlockTimestamp;
         uint256 fundsCommitted;
         uint256 nominationCounter;
+        uint256 totalVotes;
     }
 
     struct Nomination {
@@ -35,7 +36,6 @@ contract Retro {
         uint256 numVotes;
     }
 
-    //Nominations[roundNum][i].numVotes
     mapping (uint256 => Round) public rounds; 
     mapping (uint256 => mapping (uint256 => Nomination)) public nominations;
 
@@ -70,24 +70,26 @@ contract Retro {
 
     function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
         // check voting period is valid for the round
-        Round memory round = rounds[roundNum];
+        Round storage round = rounds[roundNum];
         uint256 tokenSum;
+        uint256 votePowerSum;
         for (uint256 i = 0; i < round.nominationCounter; i++) {
             Nomination storage nomination = nominations[roundNum][i];
             uint256 votePower = sqrt(tokenAllocations[i]); // QV vote 
             nomination.numVotes += votePower;
+            votePowerSum += votePower;
             tokenSum += tokenAllocations[i];
         }
         require(tokenSum == tokensPerBadgeHolder, "Incorrect total number of tokens");
+        round.totalVotes += votePowerSum;
         emit NewVote(roundNum, msg.sender);
     }
 
     function disperseFunds(uint roundNum) public {
-        console.log("test");
         require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
-        uint totalNumVotes = tokensPerBadgeHolder * rounds[roundNum].badgeHolders.length;
+        uint totalNumVotes = rounds[roundNum].totalVotes;
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
-            uint amount = (nominations[roundNum][i].numVotes / totalNumVotes) * rounds[roundNum].fundsCommitted;
+            uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
             (bool sent,) = nominations[roundNum][i].recipient.call{value: amount}("");
             require(sent, 'Failed to send');
             emit Disperse(nominations[roundNum][i].recipient, amount);
@@ -161,5 +163,3 @@ contract Retro {
     }
 
 }
-
-
