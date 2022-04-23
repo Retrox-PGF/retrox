@@ -7,6 +7,7 @@ contract Retro {
     uint256 constant totalVotesPerBadgeHolder = 100;
     uint256 constant nominationDuration = 1;
     uint256 constant votingDuration = 1;
+    uint256 constant minFundingThreshold = 1; 
 
     enum RoundState {
         Nominations,
@@ -16,7 +17,7 @@ contract Retro {
     }
 
     struct Round {
-        uint256 roundURI;
+        string roundURI;
         address[] badgeHolders;
         uint256 startBlockTimestamp;
         uint256 fundsCommitted;
@@ -26,7 +27,7 @@ contract Retro {
     }
 
     struct Nomination {
-        uint256 nominationURI;
+        string nominationURI;
         address recipient;
         uint256 numVotes;
     }
@@ -37,31 +38,32 @@ contract Retro {
 
     uint256 public roundCounter;
 
-    event RPGFSetup(
-        address indexed initiator,
-        address indexed owner,
-        address indexed avatar,
-        address target
-    );
-
-    event RoundCreated(uint256 roundURI, uint256 startBlockTimestamp, uint256 fundsCommitted);
+    event RetroSetup(address indexed initiator);
+    event NewRound(string roundURI, uint256 startBlockTimestamp, uint256 fundsCommitted);
+    event NewNomination(string nominationURI, address recipient);
 
     // Only the safe owners can create a new round.
-    function createRound(uint256 roundURI, address[] memory badgeHolders, uint256 fundsCommitted) public {
-
+    function createRound(string memory roundURI, address[] memory badgeHolders, uint256 fundsCommitted) public {
+    
         rounds[roundCounter].roundURI = roundURI;
         rounds[roundCounter].badgeHolders = badgeHolders;
         rounds[roundCounter].startBlockTimestamp = block.timestamp;
         rounds[roundCounter].fundsCommitted = fundsCommitted;
-
-        emit RoundCreated(roundURI, block.timestamp, fundsCommitted);
         roundCounter++;
+        emit NewRound(roundURI, block.timestamp, fundsCommitted);
     }
 
-    // function nominate(uint256 nominationURI) virtual public;
-
+    function nominate(uint256 roundNum, string memory nominationURI, address recipient) public {
+        //check nomination is valid 
+        Round memory round = rounds[roundNum];
+        nominations[roundNum][round.nominationCounter].nominationURI = nominationURI;
+        nominations[roundNum][round.nominationCounter].recipient = recipient;
+        round.nominationCounter++;
+        emit NewNomination(nominationURI, recipient);
+    }
 
     // function vote(uint256 nominationURI, uint256 votePower) virtual public;
 
-
 }
+
+
