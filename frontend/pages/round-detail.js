@@ -9,8 +9,9 @@ import { ethers } from 'ethers'
 const unorderedNominationsData = require('../data/optimismNominations.json');
 const optimismVoteData = require('../data/optimismVotes.json');
 import {Doughnut} from 'react-chartjs-2';
-import {Chart, ArcElement} from 'chart.js'
-Chart.register(ArcElement);
+import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
+// import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
+ChartJS.register(ArcElement, Tooltip);
 const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
 
 function createColor() {
@@ -18,22 +19,40 @@ function createColor() {
   return '#' + n.slice(0, 6);
 }
 
-
+const options = {
+  plugins: {
+    tooltip : {
+      displayColors: false,
+    }
+  }
+}
 
 function createDoughnutData(project, legend) {
   if (project === undefined) {
     project = [];
   }
   const returnData = {
-    labels: [],
+  labels: [],
   datasets: [{
     data: [],
     backgroundColor: [],
-    hoverBackgroundColor: []
+    hoverBackgroundColor: [],
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
   }]};
   for (const [key, value] of Object.entries(project)) {
+    // check length of object entries
+    if (key > Object.entries(project).length - 5) {
+      break
+    }
     if (value != null) {
       returnData.datasets[0].data.push(value);
+      // returnData.labels.push(legend[key]);
       returnData.labels.push(legend[key]);
       returnData.datasets[0].backgroundColor.push(createColor());
       returnData.datasets[0].hoverBackgroundColor.push(createColor());
@@ -41,6 +60,47 @@ function createDoughnutData(project, legend) {
   }
   return returnData;
 }
+
+
+function createDoughnutRoundData(voteData) {
+  let voteDataCopy = JSON.parse(JSON.stringify(voteData));
+  delete voteDataCopy.Badgeholder;
+  // if (project === undefined) {
+  //   project = [];
+  // }
+  const returnData = {
+  labels: [],
+  datasets: [{
+    data: [],
+    backgroundColor: [],
+    hoverBackgroundColor: [],
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  }]};
+  for (const [key, value] of Object.entries(voteDataCopy)) {
+    if (key == 'SUM'){
+      break
+    }
+    if (value != null) {
+      returnData.datasets[0].data.push(value[Object.keys(value).length-4]);
+      // console.log(value[`${value.length-4}`]);
+      // console.log(`value['${value.length-4}']`);
+      console.log(value[Object.keys(value).length-4])
+      // console.log(Object.entries(voteDataCopy).length - 4)
+      // returnData.labels.push(legend[key]);
+      returnData.labels.push(key);
+      returnData.datasets[0].backgroundColor.push(createColor());
+      returnData.datasets[0].hoverBackgroundColor.push(createColor());
+    }
+  }
+  return returnData;
+}
+
 
 const domain = "localhost";
 const origin = "https://localhost/login";
@@ -421,13 +481,15 @@ const Main = (props) => (
             </div>
             <div className="px-6 py-2 text-lg">
               {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} awarded
+            
             </div>
           </div>
           {props.voteData[props.nomination.projectName] ?
           <div className="p-4 flex-grow">
             <div className="flex items-center justify-center p-2 text-gray-400 text-3xl font-semibold bg-gray-100 border-2 border-gray-200 border-dashed rounded-md">
               <div className='w-4/5 h-2/5'>
-                <Doughnut data={createDoughnutData(props.voteData[props.nomination.projectName], props.voteData.Badgeholder)} width={400} height={400}/>
+                <Doughnut data={createDoughnutData(props.voteData[props.nomination.projectName], props.voteData.Badgeholder)} width={400} height={400} options={options}/>
+                <Doughnut data={createDoughnutRoundData(props.voteData)} width={400} height={400} options={options}/>
               </div>
             </div>
             <div className="mt-2 text-center">Distribution of votes</div>
