@@ -4,15 +4,50 @@
 // import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 // import "hardhat/console.sol";
 
-pragma solidity >=0.8.0;
+// initializing the CFA Library
+pragma solidity ^0.8.0;
+
+import { 
+    ISuperfluid,
+    ISuperToken 
+} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol"; //"@superfluid-finance/ethereum-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
+
+import { 
+    IConstantFlowAgreementV1 
+} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
+
+import {
+    CFAv1Library
+} from "@superfluid-finance/ethereum-contracts/contracts/apps/CFAv1Library.sol";
 
 contract Retro {
 
+    using CFAv1Library for CFAv1Library.InitData;
+    
+    //initialize cfaV1 variable
+    CFAv1Library.InitData public cfaV1;
+    ISuperfluid public host;
+    
+    constructor(address _host)  {
+        host = ISuperfluid(_host);
+        //initialize InitData struct, and set equal to cfaV1
+        cfaV1 = CFAv1Library.InitData(
+            host,
+            //here, we are deriving the address of the CFA using the host contract
+            IConstantFlowAgreementV1(
+                address(host.getAgreementClass(
+                        keccak256("org.superfluid-finance.agreements.ConstantFlowAgreement.v1")
+                    ))
+                )
+            );
+    }
+    
     uint256 constant tokensPerBadgeHolder = 100;
     uint256 constant nominationDuration = 0;
     uint256 constant votingDuration = 0;
     uint256 constant minRoundCreationThreshold = 1;
     uint256 constant minNominationThreshold = 1; 
+    uint256 constant minDisperseAmount = 1;
 
     enum RoundState {
         Nominations,
@@ -73,7 +108,7 @@ contract Retro {
         Round storage round = rounds[roundNum];
         uint256 tokenSum;
         uint256 votePowerSum;
-        for (uint256 i = 0; i < round.nominationCounter; i++) {
+        for (uint256 i = 0; i <= round.nominationCounter; i++) {
             Nomination storage nomination = nominations[roundNum][i];
             uint256 votePower = sqrt(tokenAllocations[i]); // QV vote 
             nomination.numVotes += votePower;
@@ -85,14 +120,25 @@ contract Retro {
         emit NewVote(roundNum, msg.sender);
     }
 
+    function toInt96(uint256 value) internal pure returns (int96) {
+        require(value <= uint256(int256(type(int96).max)), "SafeCast96: value doesn't fit in 96 bits");
+        return int96(int256(value));
+    }
+
     function disperseFunds(uint roundNum) public {
         require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
         uint totalNumVotes = rounds[roundNum].totalVotes;
+     
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
             uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
-            (bool sent,) = nominations[roundNum][i].recipient.call{value: amount}("");
-            require(sent, 'Failed to send');
-            emit Disperse(nominations[roundNum][i].recipient, amount);
+            if(amount > minDisperseAmount) {
+                (bool sent,) = nominations[roundNum][i].recipient.call{value: amount/2}("");
+                //cfaV1.createFlow(nominations[roundNum][i].recipient, "0xe72f289584eDA2bE69Cfe487f4638F09bAc920Db", amount/2);
+                cfaV1.createFlow(0xe72f289584eDA2bE69Cfe487f4638F09bAc920Db, ISuperToken(0xe72f289584eDA2bE69Cfe487f4638F09bAc920Db), toInt96(amount/2));
+                // TODO: deleteFlow 
+                require(sent, 'Failed to send');
+                emit Disperse(nominations[roundNum][i].recipient, amount);
+            }
         }
     }
 
@@ -164,8 +210,4 @@ contract Retro {
     function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (Nomination memory) {
         return nominations[roundNum][nominationNum];
     }
-
-
-
-
 }
