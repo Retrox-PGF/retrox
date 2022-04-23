@@ -1,2 +1,24 @@
 node_modules
 **/__pycache__
+
+#Hardhat files
+cache
+artifacts
+starknet-artifacts
+factories
+typechain
+
+.yarn
+.env
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local deployments
+deployed_contracts/local.json
