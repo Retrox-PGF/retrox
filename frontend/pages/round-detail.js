@@ -39,8 +39,55 @@ function createDoughnutData(project, legend) {
   labels: [],
   datasets: [{
     data: [],
-    backgroundColor: [],
-    hoverBackgroundColor: [],
+    borderWidth: 0.5,
+    backgroundColor:  [
+    "#0700CF",
+    "#1900CF",
+    "#2A00CE",
+    "#3C00CE",
+    "#4D00CE",
+    "#5E00CD",
+    "#7000CD",
+    "#8100CD",
+    "#9200CC",
+    "#A900D3",
+    "#8900CA",
+    "#6B00C1",
+    "#4F00B8",
+    "#3500AF",
+    "#1E00A6",
+    "#09009D",
+    "#000BA2",
+    "#0020A7",
+    "#0036AC",
+    "#004EB1",
+    "#0066B6",
+    "#0080BA",
+    "#0098BF"],
+    hoverBackgroundColor: [
+      "#0700CF80",
+      "#1900CF80",
+      "#2A00CE80",
+      "#3C00CE80",
+      "#4D00CE80",
+      "#5E00CD80",
+      "#7000CD80",
+      "#8100CD80",
+      "#9200CC80",
+      "#A900D380",
+      "#8900CA80",
+      "#6B00C180",
+      "#4F00B880",
+      "#3500AF80",
+      "#1E00A680",
+      "#09009D80",
+      "#000BA280",
+      "#0020A780",
+      "#0036AC80",
+      "#004EB180",
+      "#0066B680",
+      "#0080BA80",
+      "#0098BF80"],
     options: {
       scales: {
         y: {
@@ -58,8 +105,8 @@ function createDoughnutData(project, legend) {
       returnData.datasets[0].data.push(value);
       // returnData.labels.push(legend[key]);
       returnData.labels.push(legend[key]);
-      returnData.datasets[0].backgroundColor.push(createColor());
-      returnData.datasets[0].hoverBackgroundColor.push(createColor());
+      // returnData.datasets[0].backgroundColor.push(createColor());
+      // returnData.datasets[0].hoverBackgroundColor.push(createColor());
     }
   }
   return returnData;
@@ -372,11 +419,11 @@ const Main = (props) => (
           </svg>
         </div>
         <div>
-          <span className="inline-block text-2xl font-bold">{Object.keys(props.voteData.Badgeholder).length - 4}</span>
+          <span className="inline-block text-2xl font-bold">{props.voteData && Object.keys(props.voteData['Badgeholder']).length - 4}</span>
           <span className="block text-gray-500">Badgeholders</span>
         </div>
       </div>
-      <div className="flex items-center p-8 bg-white rounded-xl shadow-md" 
+      <div className="flex items-center p-8 bg-white rounded-xl shadow-md"
       //onClick={props.votingState == 2 ? props.showStreamingModal : undefined }
       onClick={props.showFundingModal}>
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-400 to-pink-400 rounded-full mr-6">
@@ -440,8 +487,13 @@ const Main = (props) => (
       </div>
       {props.votingState == 1 && props.canVote ?
         <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl justify-between py-2 shadow-md overflow-auto h-96">
-          <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
-            Cast your vote {props.votesRemaining}
+          <div className="flex flex-row border-b border-gray-100">
+          <div className="px-6 py-5 font-semibold text-xl">
+            Cast your vote
+          </div>
+          <div className="px-6 py-5 text-lg ml-auto">
+            {props.votesRemaining} votes
+          </div>
           </div>
           <div className="flex flex-col content-start overflow-auto">
             {Object.keys(props.votedOnObject).map((obj, i) => (
@@ -452,9 +504,12 @@ const Main = (props) => (
               </div>
             ))}
           </div>
-          <div className="flex flex-row items-center justify-center mt-2 border-t py-3">
+          <div className="flex flex-row items-center justify-center mt-2 border-t py-2">
             <button onClick={() => props.updateVote(props.nomination.id - 1, false)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">-</button>
             <button onClick={() => props.updateVote(props.nomination.id - 1, true)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">+</button>
+          </div>
+          <div className="flex flex-row items-center justify-center">
+            <button onClick={() => props.updateVote(props.nomination.id - 1, false)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">-</button>
           </div>
         </div>
 
@@ -473,7 +528,14 @@ const Main = (props) => (
             </div>
             <div className="px-6 py-2 text-lg">
               {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} awarded
-
+            </div>
+            <div className="px-6 py-2 text-lg">
+              <div className="relative pt-1">
+                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-pink-100">
+                  <div style={{ width: "100%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-blue-500 to-pink-700"></div>
+                </div>
+              </div>
+              100% of funds received
             </div>
           </div>
           {props.voteData[props.nomination.projectName] ?
@@ -484,7 +546,7 @@ const Main = (props) => (
               </div>
             </div>
             <div className="mt-2 text-center">Distribution of votes</div>
-          </div> :null }
+          </div> : null }
         </div>
         :
         null
@@ -514,7 +576,7 @@ function Layout(props) {
 export default function Nominations() {
   const N = 106
   const [address, setAddress] = useState('');
-  const [nomination, setNomination] = useState(1);
+  const [nomination, setNomination] = useState(2);
   const [votesRemaining, setVotesRemaining] = useState(0);
   const [ballot, setBallot] = useState(Array(nominationsData.length).fill(0));
   const [canVote, setCanVote] = useState(false);
@@ -524,6 +586,7 @@ export default function Nominations() {
   const [showBadgeholderModal, setShowBadgeholderModal] = useState(false)
   const [showFundingModal, setShowFundingModal] = useState(false)
   const [badgeholders, setBadgeholders] = useState()
+  const [streamingData, setStreamingData] = useState()
 
   function updateVote(index, plus) {
     const modBallot = ballot;
@@ -555,7 +618,7 @@ export default function Nominations() {
   }
 
   async function checkVotingState() {
-    return 2;
+    return 1;
   }
 
   const router = useRouter()
@@ -565,6 +628,10 @@ export default function Nominations() {
   function selectNomination(id) {
     setNomination(id);
   }
+
+  useEffect(() => {
+    setStreamingData(['10.000', '0.0001'])
+  }, [nomination]);
 
   async function logIn() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -587,22 +654,11 @@ export default function Nominations() {
         votesObject[i] = element;
       }
     })
-    console.log(votesObject)
     setVotedOnObject(votesObject);
   }
 
   useEffect(() => {
     setAddress(window.localStorage.getItem("userAddress"))
-  }, []);
-
-  useEffect(() => {
-    if (!badgeholders) {
-      let bagdeHolderData = optimismVoteData['Badgeholder'];
-      // for (let i = 0; i < 2; i++) {
-      //   delete bagdeHolderData[Object.keys(bagdeHolderData).length - 1]
-      // }
-      setBadgeholders(bagdeHolderData)
-    }
   }, []);
 
   useEffect(() => {
@@ -652,6 +708,7 @@ export default function Nominations() {
     {showChartModal && <ChartModal close={() => setShowChartModal(false)} voteData={optimismVoteData}></ChartModal>}
     {showBadgeholderModal && <BadgeholderModal close={() => setShowBadgeholderModal(false)} badgeholderList={badgeholders}></BadgeholderModal>}
     {showFundingModal && <FundingModal close={() => setShowFundingModal(false)}></FundingModal>}
+
     {}
     </>
   );

@@ -4,5 +4,5 @@ export const rounds = [
   {name: 'Optimism round', id: 3},
   {name: 'i like parks round', id: 4},
   {name: 'My private round', id: 5},
-  {name: 'Anotehr round', id: 6},
+  {name: 'Another round', id: 6},
 ];
