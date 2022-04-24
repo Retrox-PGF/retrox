@@ -12,6 +12,7 @@ import axios from 'axios'
 const domain = "localhost";
 const origin = "https://localhost/login";
 
+
 function createSiweMessage (address, statement) {
   const siweMessage = new siwe.SiweMessage({
     domain,
@@ -241,6 +242,19 @@ function Layout(props) {
   );
 }
 
+
+async function contractInitRound(roundURI, badgeholders, value){
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  console.log(signer)
+  const retroAddress = "0xf9b9D7dBb7c2a49AB3D021D9aeC8A7C9d7f890AB"
+  const retroABI = [
+    "function createRound(string memory roundURI, address[] memory badgeHolders) public payable"
+  ]
+  const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
+  await retroContract.connect(signer).createRound(roundURI, badgeholders, {value:ethers.utils.parseEther(`${value}`)});
+}
+
 export default function NewRound() {
   const [address, setAddress] = useState('');
   const [ipfs, setIpfs] = useState(null);
@@ -274,7 +288,9 @@ export default function NewRound() {
       addresses: addressArray
     })
     console.log(metadata)
-    // create transaction with staking
+    // create transaction with value locked
+    await contractInitRound(ipfsURI, addressArray, funding.value/100)
+    
   }
 
   async function logIn() {
@@ -284,7 +300,7 @@ export default function NewRound() {
     const address = await signer.getAddress()
     const signedMessage = await signer.signMessage(createSiweMessage(
       address,
-      "Welcome to Retro."
+      "Welcome to Retr0x."
     ));
     window.localStorage.setItem('signedMessage', signedMessage);
     window.localStorage.setItem('userAddress', address)
