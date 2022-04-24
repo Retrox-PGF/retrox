@@ -51,7 +51,7 @@ const Aside = () => (
   className="hidden sm:flex sm:flex-col">
   <Link href="/">
     <a
-      className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-green-500 to-blue-700 hover:bg-blue-500 focus:bg-blue-500 text-white"
+      className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-purple-600 to-blue-700 hover:bg-blue-500 focus:bg-blue-500 text-white"
     >
       Retro
     </a>
