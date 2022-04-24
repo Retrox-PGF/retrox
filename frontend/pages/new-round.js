@@ -207,7 +207,7 @@ const Main = (props) => (
               </div>
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Initial funding amount (in eth)</label>
-                <input type="number" placeholder="Retro" name="funding" className="border rounded-xl p-2" required></input>
+                <input type="number" placeholder="Retro" name="funding" step="0.001" className="border rounded-xl p-2" required></input>
               </div>
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Badgeholders (entries on a seperate line)</label>
@@ -289,7 +289,7 @@ export default function NewRound() {
     })
     console.log(metadata)
     // create transaction with value locked
-    await contractInitRound(ipfsURI, addressArray, funding.value/100)
+    await contractInitRound(ipfsURI, addressArray, funding.value)
     
   }
 
