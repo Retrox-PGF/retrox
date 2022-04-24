@@ -237,7 +237,7 @@ const Main = (props) => (
         <h2 className="text-gray-600 ml-0.5">Round information sentence?</h2>
       </div>
       <div className="flex flex-wrap items-start justify-end -mb-3">
-        <Link href='/new-nomination'>
+        <Link href={'/new-nomination?id=' + props.roundID}>
         <a className="inline-flex px-5 py-3 text-white bg-gradient-to-r from-blue-700 to-purple-600 hover:from-purple-700 hover:to-blue-800 rounded-xl shadow-md ml-6 mb-3">
           <svg
             aria-hidden="true"
@@ -483,16 +483,21 @@ export default function Nominations() {
     getVotes(modBallot);
   }
 
-  async function checkCanVote(address) {
-    // hasn't voted (need contract communication)
-    const hasntVoted = true;
+  async function contractInitBadgeholder(roundNum, badgeAddress){
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const retroAddress = "0xf9b9D7dBb7c2a49AB3D021D9aeC8A7C9d7f890AB"
+    const retroABI = [
+      "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
+    ]
+    const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
+    await retroContract.connect(signer).getBadgeHolderStatus(roundNum, badgeAddress);
+  }
 
-    // is whitelisted (need contract communication)
-    const badgeHolders = ['0x']
-    // const isWhitelisted = badgeHolders.includes(address)
-    const isWhitelisted = true;
+ 
 
-    return hasntVoted && isWhitelisted;
+  function checkCanVote(address) {
+    return contractInitBadgeholder(roundID, address)==1
   }
 
   async function checkVotingState() {
