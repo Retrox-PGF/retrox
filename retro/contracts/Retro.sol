@@ -2,7 +2,7 @@
 
 
 // import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 // initializing the CFA Library
 pragma solidity ^0.8.0;
@@ -73,6 +73,9 @@ contract Retro {
 
     mapping (uint256 => Round) public rounds; 
     mapping (uint256 => mapping (uint256 => Nomination)) public nominations;
+    mapping(uint256 => mapping (address => uint256)) public badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
+    mapping(uint256  => uint256) public amounts;
+    mapping(uint256 => uint256) public flowRates;
 
     uint256 public roundCounter;
 
@@ -88,6 +91,11 @@ contract Retro {
         rounds[roundCounter].badgeHolders = badgeHolders;
         rounds[roundCounter].startBlockTimestamp = block.timestamp;
         rounds[roundCounter].fundsCommitted = msg.value;
+
+        for (uint256 i = 0; i < badgeHolders.length; i++) {
+            badgeHolderVoteStatus[roundCounter][badgeHolders[i]] = 1;
+        }
+
         roundCounter++;
         emit NewRound(roundURI, block.timestamp, msg.value);
     }
@@ -105,6 +113,7 @@ contract Retro {
 
     function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
         // check voting period is valid for the round
+        require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "You are not eligible to vote or have already voted");
         Round storage round = rounds[roundNum];
         uint256 tokenSum;
         uint256 votePowerSum;
@@ -117,6 +126,7 @@ contract Retro {
         }
         require(tokenSum == tokensPerBadgeHolder, "Incorrect total number of tokens");
         round.totalVotes += votePowerSum;
+        badgeHolderVoteStatus[roundNum][msg.sender] = 2;
         emit NewVote(roundNum, msg.sender);
     }
 
@@ -128,16 +138,16 @@ contract Retro {
     function disperseFunds(uint roundNum) public {
         require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
         uint totalNumVotes = rounds[roundNum].totalVotes;
-     
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
             uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
+            console.log("amount");
+            console.log(amount);
+            amounts[i] = amount;
             if(amount > minDisperseAmount) {
                 (bool sent,) = nominations[roundNum][i].recipient.call{value: amount/2}("");
-                //cfaV1.createFlow(nominations[roundNum][i].recipient, "0xe72f289584eDA2bE69Cfe487f4638F09bAc920Db", amount/2);
-                cfaV1.createFlow(0xe72f289584eDA2bE69Cfe487f4638F09bAc920Db, ISuperToken(0xe72f289584eDA2bE69Cfe487f4638F09bAc920Db), toInt96(amount/2));
-                // TODO: deleteFlow 
                 require(sent, 'Failed to send');
                 emit Disperse(nominations[roundNum][i].recipient, amount);
+                cfaV1.createFlow(nominations[roundNum][i].recipient, ISuperToken(0xe72f289584eDA2bE69Cfe487f4638F09bAc920Db), toInt96((1)));
             }
         }
     }
@@ -201,13 +211,23 @@ contract Retro {
         }
     }
 
-
-
-    function getRoundData(uint256 roundNum) public view returns (Round memory) {
-        return rounds[roundNum];
+    function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256) {
+        return (rounds[roundNum].roundURI, rounds[roundNum].startBlockTimestamp, rounds[roundNum].fundsCommitted, rounds[roundNum].nominationCounter, rounds[roundNum].totalVotes);
     }
 
-    function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (Nomination memory) {
-        return nominations[roundNum][nominationNum];
+    function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (string memory, address, uint256) {
+        return (nominations[roundNum][nominationNum].nominationURI, nominations[roundNum][nominationNum].recipient, nominations[roundNum][nominationNum].numVotes);
+    }
+
+    function getNextRoundNum() public view returns (uint256) {
+        return roundCounter;
+    }
+
+    function getAmountData(uint256 nominationNum) public view returns (uint256) {
+        return amounts[nominationNum];
+    }
+
+    function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256) {    
+        return badgeHolderVoteStatus[roundNum][badgeHolder];
     }
 }
