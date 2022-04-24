@@ -248,12 +248,14 @@ function Layout(props) {
   );
 }
 
-export default function Rounds() {
+export default function Rounds({ rounds }) {
   const [address, setAddress] = useState('');
   const router = useRouter()
   function cardClick(id) {
     router.push('round-detail?id=' + id)
   }
+
+  console.log(rounds)
 
   async function logIn() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -283,4 +285,15 @@ export default function Rounds() {
     <Layout cardClick={cardClick} signIn={logIn} address={address}></Layout>
     </>
   );
+}
+
+
+import { getRounds } from "../lib/getRounds"
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      rounds: await getRounds()
+    }
+  }
 }
