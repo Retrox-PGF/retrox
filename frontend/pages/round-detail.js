@@ -573,6 +573,7 @@ export default function Nominations({ nominations }) {
   }
 
   async function checkVotingState() {
+    console.log(nominations.votingState)
     return nominations.votingState;
   }
 
@@ -623,7 +624,7 @@ export default function Nominations({ nominations }) {
   useEffect(() => {
     async function foo() {
       const votingState = await checkVotingState();
-      if (votingState == 1) {
+      if (votingState == 1 && address) {
         const vote = await checkCanVote(address);
         setVotingState(votingState);
         setCanVote(vote);
@@ -637,7 +638,7 @@ export default function Nominations({ nominations }) {
         setVotingState(votingState);
       }
     }
-    if (address) {foo()};
+    foo();
   }, [address])
 
   const handleKeyPress = useCallback((event) => {
