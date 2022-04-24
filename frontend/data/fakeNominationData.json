@@ -1,0 +1,41 @@
+[
+  {
+    "": 0,
+    "projectName": "Investigating control of somethin",
+    "timestamp": "10/5/2021 13:49:38",
+    "nominatorName": "Hank",
+    "nominatorEmail": "Brown",
+    "projectURL": "https://github.com/supranational/blst",
+    "projectLeadName": "Supranational",
+    "projectLeadEmail": "hello@supranational.net",
+    "rationale": "This project is a core cryptography library for all of the Ethereum 2 clients. The library is crucial to the security and performance of Eth2 and the transition to PoS. BLS12-381 can also be used to enable new wallet types and using retroactive public goods funding to support maintenance of the library and feature development will benefit the entire Eth ecosystem.",
+    "We'd love to feature the most thoughtful nominations  on Twitter. A feature will increase the reach and influence of your nomination. If you're open to being featured please:": "Convert your \"why this project\" answer into a Twitter thread",
+    "id": 1
+  },
+  {
+    "": 1,
+    "projectName": "Hive",
+    "timestamp": "10/5/2021 14:13:29",
+    "nominatorName": "Rene Lubov",
+    "nominatorEmail": "rene@celestia.org",
+    "projectURL": "https://github.com/ethereum/hive",
+    "projectLeadName": "Felix Lange",
+    "projectLeadEmail": "felix@ethereum.org",
+    "rationale": "Hive has caught several bugs in nethermind and geth (https://github.com/ethereum/hive#trophies) and is actively maintained by Felix and others from the geth team, including Martin H Swende and now Jared Wasinger. This is an extremely important test suite for possible future client implementors to check behaviour/spec conformance and is an important component of the ethereum CI pipeline, results can be viewed here: https://hivetests.ethdevops.io/. Hive will likely also be repurposed to support eth2 in the future.",
+    "We'd love to feature the most thoughtful nominations  on Twitter. A feature will increase the reach and influence of your nomination. If you're open to being featured please:": "Convert your \"why this project\" answer into a Twitter thread",
+    "id": 2
+  },
+  {
+    "": 2,
+    "projectName": "Watch The Burn",
+    "timestamp": "10/5/2021 14:23:29",
+    "nominatorName": "Eren Song",
+    "nominatorEmail": "erensong@gmail.com",
+    "projectURL": "https://watchtheburn.com",
+    "projectLeadName": "Mohamed Mansour",
+    "projectLeadEmail": "hello@mohamedmansour.com",
+    "rationale": "It is a great informative website that showcases Ethereum Burn, it is completely open sourced, all the development and design is public and it really helped the community validate EIP-1559!",
+    "We'd love to feature the most thoughtful nominations  on Twitter. A feature will increase the reach and influence of your nomination. If you're open to being featured please:": "Convert your \"why this project\" answer into a Twitter thread, Tag @optimismPBC in your thread",
+    "id": 3
+  }
+]
