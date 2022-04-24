@@ -309,7 +309,7 @@ const Main = (props) => (
       </div>
       {props.votingState == 0 &&
       <div className="flex flex-wrap items-start justify-end -mb-3">
-        <Link href='/new-nomination'>
+        <Link href={'/new-nomination?id=' + props.roundID}>
         <a className="inline-flex px-5 py-3 text-white bg-gradient-to-r from-blue-700 to-purple-600 hover:from-purple-700 hover:to-blue-800 rounded-xl shadow-md ml-6 mb-3">
           <svg
             aria-hidden="true"
@@ -575,7 +575,7 @@ function Layout(props) {
   );
 }
 
-export default function Nominations() {
+export default function Nominations({ nominations }) {
   const N = 106
   const [address, setAddress] = useState('');
   const [nomination, setNomination] = useState(2);
@@ -589,6 +589,8 @@ export default function Nominations() {
   const [showFundingModal, setShowFundingModal] = useState(false)
   const [badgeholders, setBadgeholders] = useState()
   const [streamingData, setStreamingData] = useState()
+
+  console.log(nominations);
 
   function updateVote(index, plus) {
     const modBallot = ballot;
@@ -606,16 +608,22 @@ export default function Nominations() {
     getVotes(modBallot);
   }
 
+  async function contractInitBadgeholder(roundNum, badgeAddress){
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b"
+    const retroABI = [
+      "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
+    ]
+    const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
+    console.log(badgeAddress)
+    await retroContract.connect(signer).getBadgeHolderStatus(roundNum, badgeAddress);
+  }
+
+ 
+
   async function checkCanVote(address) {
-    // hasn't voted (need contract communication)
-    const hasntVoted = true;
-
-    // is whitelisted (need contract communication)
-    const badgeHolders = ['0x']
-    // const isWhitelisted = badgeHolders.includes(address)
-    const isWhitelisted = true;
-
-    return hasntVoted && isWhitelisted;
+    return (await contractInitBadgeholder(roundID, address)) == 1
   }
 
   async function checkVotingState() {
@@ -716,4 +724,15 @@ export default function Nominations() {
     {}
     </>
   );
+}
+
+
+import { getNominations } from "../lib/getNominations";
+
+export async function getServerSideProps({ query }) {
+  return {
+    props: {
+      nominations: await getNominations(query.id)
+    }
+  }
 }
