@@ -706,7 +706,7 @@ export default function Nominations() {
     </Head>
     <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)} nominationData={nominationsData} voteData={optimismVoteData} canVote={canVote} votingState={votingState} updateVote={updateVote} votesRemaining={votesRemaining} votedOnObject={votedOnObject} showChartModal={() => setShowChartModal(true)} showBadgeholderModal={() => setShowBadgeholderModal(true)} showFundingModal={() => setShowFundingModal(true)}></Layout>
     {showChartModal && <ChartModal close={() => setShowChartModal(false)} voteData={optimismVoteData}></ChartModal>}
-    {showBadgeholderModal && <BadgeholderModal close={() => setShowBadgeholderModal(false)} badgeholderList={badgeholders}></BadgeholderModal>}
+    {showBadgeholderModal && <BadgeholderModal close={() => setShowBadgeholderModal(false)} badgeholderList={optimismVoteData['Badgeholder']}></BadgeholderModal>}
     {showFundingModal && <FundingModal close={() => setShowFundingModal(false)}></FundingModal>}
 
     {}
