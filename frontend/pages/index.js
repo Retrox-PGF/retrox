@@ -18,7 +18,7 @@ export default function Home() {
         <br></br>
         <br></br>
         <Link href="/rounds">
-          <a class="bg-white text-black p-4 rounded-2xl mt-20 z-50 text-lg">Launch app</a>
+          <a className="bg-white text-black p-4 rounded-2xl mt-20 z-50 text-lg">Launch app</a>
         </Link>
 
       </main>
