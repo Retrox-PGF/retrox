@@ -152,6 +152,7 @@ contract Retro {
         }
     }
 
+
     /// @notice Calculates the square root of x, rounding down.
     /// @dev Uses the Babylonian method https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method.
     ///
