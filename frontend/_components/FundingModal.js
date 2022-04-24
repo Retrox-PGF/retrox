@@ -10,8 +10,8 @@ const FundingModal = (props) => {
               <div className="relative px-20 py-8 flex-auto mx-auto text-center text-xl">
                 <h2 className="font-bold text-3xl my-4 text-blue-600">Funding Information</h2>
                 <div className="flex flex-col">
-                <text>This round is funded by Optimism's donation of $1 million of Optimism Network Fees</text>
-                <a href={'https://medium.com/ethereum-optimism/retropgf-experiment-1-1-million-dollars-for-public-goods-f7e455cbdca'} target="_blank" className="mt-4 text-blue-500 hover:text-blue-700">
+                <text>This round is funded by Optimism&apos;s donation of $1 million of Optimism Network Fees</text>
+                <a href={'https://medium.com/ethereum-optimism/retropgf-experiment-1-1-million-dollars-for-public-goods-f7e455cbdca'} target="_blank" rel="noreferrer" className="mt-4 text-blue-500 hover:text-blue-700">
                     Article
                 </a>
                 </div>

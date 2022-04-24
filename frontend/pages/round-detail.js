@@ -13,9 +13,9 @@ const optimismVoteData = require('../data/optimismVotes.json');
 const fakeVoteData = require('../data/fakeVotes.json');
 import {Doughnut} from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
-import ChartModal from './_components/ChartModal'
-import BadgeholderModal from './_components/BadgeholderModal'
-import FundingModal from './_components/FundingModal'
+import ChartModal from '../_components/ChartModal'
+import BadgeholderModal from '../_components/BadgeholderModal'
+import FundingModal from '../_components/FundingModal'
 // import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
 ChartJS.register(ArcElement, Tooltip);
 const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
@@ -155,7 +155,7 @@ const Aside = () => (
     <a
       className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-purple-500 to-blue-700 hover:bg-blue-500 focus:bg-blue-500 text-white"
     >
-      Retro
+      Retr0x
     </a>
     </Link>
     <div className="flex-grow flex flex-col justify-between text-gray-500 bg-gray-800">
@@ -306,11 +306,9 @@ const Main = (props) => (
         <a className="inline-flex px-5 py-3 text-white bg-gradient-to-r from-blue-600 to-green-600 hover:from-green-600 hover:to-blue-600 rounded-xl shadow-md ml-6 mb-3" href='/optimism.csv' download>
         <svg
         aria-hidden="true"
-        fill="none"
-        viewBox="0 0 24 24"
         stroke="currentColor"
         className="flex-shrink-0 h-6 w-6 text-white -ml-1 mr-2"
-        xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><path d="M200,224H56a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h96l56,56V216A8,8,0,0,1,200,224Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><polyline points="152 32 152 88 208 88" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></polyline><polyline points="100 156 128 184 156 156" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></polyline><line x1="128" y1="120" x2="128" y2="184" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line></svg>
+        xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><path d="M200,224H56a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h96l56,56V216A8,8,0,0,1,200,224Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path><polyline points="152 32 152 88 208 88" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></polyline><polyline points="100 156 128 184 156 156" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></polyline><line x1="128" y1="120" x2="128" y2="184" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line></svg>
           Download Data
         </a>
       </div>}
@@ -321,11 +319,9 @@ const Main = (props) => (
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-700 to-purple-400 rounded-full mr-6">
           <svg
           aria-hidden="true"
-          fill="none"
-          viewBox="0 0 24 24"
           stroke="currentColor"
           className="h-9 w-9"
-          xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><circle cx="128" cy="140" r="40" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></circle><path d="M196,116a59.8,59.8,0,0,1,48,24" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M12,140a59.8,59.8,0,0,1,48-24" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M70.4,216a64.1,64.1,0,0,1,115.2,0" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M60,116A32,32,0,1,1,91.4,78" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M164.6,78A32,32,0,1,1,196,116" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path></svg>
+          xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><circle cx="128" cy="140" r="40" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></circle><path d="M196,116a59.8,59.8,0,0,1,48,24" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path><path d="M12,140a59.8,59.8,0,0,1,48-24" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path><path d="M70.4,216a64.1,64.1,0,0,1,115.2,0" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path><path d="M60,116A32,32,0,1,1,91.4,78" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path><path d="M164.6,78A32,32,0,1,1,196,116" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path></svg>
         </div>
         <div>
           <span className="block text-2xl font-bold">{props.nominationData.length}</span>
@@ -337,11 +333,9 @@ const Main = (props) => (
           <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-6">
             <svg
             aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
             stroke="currentColor"
             className="h-9 w-9"
-            xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><line x1="96" y1="56" x2="96" y2="200" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><path d="M24,167.2a7.9,7.9,0,0,1,6.4-7.8,32.1,32.1,0,0,0,0-62.8A7.9,7.9,0,0,1,24,88.8V64a8,8,0,0,1,8-8H224a8,8,0,0,1,8,8V88.8a7.9,7.9,0,0,1-6.4,7.8,32.1,32.1,0,0,0,0,62.8,7.9,7.9,0,0,1,6.4,7.8V192a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path></svg>
+            xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><line x1="96" y1="56" x2="96" y2="200" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line><path d="M24,167.2a7.9,7.9,0,0,1,6.4-7.8,32.1,32.1,0,0,0,0-62.8A7.9,7.9,0,0,1,24,88.8V64a8,8,0,0,1,8-8H224a8,8,0,0,1,8,8V88.8a7.9,7.9,0,0,1-6.4,7.8,32.1,32.1,0,0,0,0,62.8,7.9,7.9,0,0,1,6.4,7.8V192a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path></svg>
           </div>
           <div>
             <span className="block text-2xl font-bold">Voting results</span>
@@ -351,20 +345,11 @@ const Main = (props) => (
         :
       <div className="flex items-center p-8 bg-white rounded-xl shadow-md">
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-6">
-          <svg
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="h-6 w-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-            />
-          </svg>
+        <svg
+        aria-hidden="true"
+        stroke="currentColor"
+        className="h-9 w-9"
+        xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><line x1="96" y1="56" x2="96" y2="200" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line><path d="M24,167.2a7.9,7.9,0,0,1,6.4-7.8,32.1,32.1,0,0,0,0-62.8A7.9,7.9,0,0,1,24,88.8V64a8,8,0,0,1,8-8H224a8,8,0,0,1,8,8V88.8a7.9,7.9,0,0,1-6.4,7.8,32.1,32.1,0,0,0,0,62.8,7.9,7.9,0,0,1,6.4,7.8V192a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path></svg>
         </div>
         <div>
           <span className="block text-2xl font-bold">3 days</span>
@@ -376,11 +361,9 @@ const Main = (props) => (
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-600 to-red-600 rounded-full mr-6">
           <svg
           aria-hidden="true"
-          fill="none"
-          viewBox="0 0 24 24"
           stroke="currentColor"
           className="h-9 w-9"
-          xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><circle cx="128" cy="136" r="32" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></circle><path d="M80,192a60,60,0,0,1,96,0" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><rect x="32" y="48" width="192" height="160" rx="8" transform="translate(256) rotate(90)" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></rect><line x1="96" y1="64" x2="160" y2="64" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line></svg>
+          xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><circle cx="128" cy="136" r="32" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></circle><path d="M80,192a60,60,0,0,1,96,0" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path><rect x="32" y="48" width="192" height="160" rx="8" transform="translate(256) rotate(90)" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></rect><line x1="96" y1="64" x2="160" y2="64" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line></svg>
         </div>
         <div>
           <span className="inline-block text-2xl font-bold">{props.voteData && Object.keys(props.voteData['Badgeholder']).length - 4}</span>
@@ -393,11 +376,9 @@ const Main = (props) => (
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-red-500 to-purple-700 rounded-full mr-6">
           <svg
           aria-hidden="true"
-          fill="none"
-          viewBox="0 0 24 24"
           stroke="currentColor"
           className="h-9 w-9"
-          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="16" y="64" width="224" height="128" rx="8" fill="none" stroke="#fffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></rect><circle cx="128" cy="128" r="32" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></circle><line x1="176" y1="64" x2="240" y2="120" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><line x1="176" y1="192" x2="240" y2="136" fill="none" stroke="#fffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><line x1="80" y1="64" x2="16" y2="120" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><line x1="80" y1="192" x2="16" y2="136" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line></svg>
+          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="16" y="64" width="224" height="128" rx="8" fill="none" stroke="#fffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></rect><circle cx="128" cy="128" r="32" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></circle><line x1="176" y1="64" x2="240" y2="120" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line><line x1="176" y1="192" x2="240" y2="136" fill="none" stroke="#fffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line><line x1="80" y1="64" x2="16" y2="120" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line><line x1="80" y1="192" x2="16" y2="136" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></line></svg>
         </div>
         <div>
           <span className="block text-2xl font-bold">{props.round.fundingPool}</span>
@@ -451,21 +432,25 @@ const Main = (props) => (
             Cast your vote
           </div>
           <div className="px-6 py-5 text-lg ml-auto">
-            {props.votesRemaining} votes
+            {!props.isSubmitted && (props.votesRemaining + " votes")}
           </div>
           </div>
           <div className="flex flex-col content-start overflow-auto">
-            {Object.keys(props.votedOnObject).length ?
+          {!props.isSubmitted ?
+            Object.keys(props.votedOnObject).length ?
               (Object.keys(props.votedOnObject).map((obj, i) => (
-                <div className="px-3 py-1 text-lg">
+                <div className="px-3 py-1 text-lg" key={i}>
                   <button className="text-blue-500 hover:text-blue-800" onClick={() => props.selectNomination(parseInt(obj) + 1)}>
                   {props.nominationData.find(o => o.id == parseInt(obj) + 1).projectName}: {props.votedOnObject[obj]} votes
                   </button>
                 </div>
               )))
               :
-            <div className="text-center text-lg">No votes yet</div>}
+            <div className="text-center text-lg">No votes yet</div>
+            :
+            <div className="text-center text-lg">Vote completed!</div>}
           </div>
+          {!props.isSubmitted ?
           <div className="flex flex-col py-2">
           <div className="flex flex-row items-center justify-center mt-2 py-3 border-t">
             <button onClick={() => props.updateVote(props.nomination.id - 1, false)} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">-</button>
@@ -475,6 +460,7 @@ const Main = (props) => (
             <button onClick={props.castVote()} className="bg-blue-600 text-white px-4 py-2 rounded-xl mx-2">Cast vote</button>
           </div>
           </div>
+          : <div></div>}
         </div>
 
           :
@@ -531,7 +517,7 @@ function Layout(props) {
 
       <div className="flex-grow text-gray-800">
         <Header signIn={props.signIn} address={props.address}></Header>
-        <Main roundID={props.roundID} roundName={props.roundName} round={props.round} nomination={props.nomination} selectNomination={props.selectNomination} nominationData={props.nominationData} voteData={props.voteData} canVote={props.canVote} votingState={props.votingState} updateVote={props.updateVote} votesRemaining={props.votesRemaining} votedOnObject={props.votedOnObject} setShowChartModal={props.showChartModal} showBadgeholderModal={props.showBadgeholderModal} showFundingModal={props.showFundingModal} castVote={props.castVote}></Main>
+        <Main roundID={props.roundID} roundName={props.roundName} round={props.round} nomination={props.nomination} selectNomination={props.selectNomination} nominationData={props.nominationData} voteData={props.voteData} canVote={props.canVote} votingState={props.votingState} updateVote={props.updateVote} votesRemaining={props.votesRemaining} votedOnObject={props.votedOnObject} setShowChartModal={props.showChartModal} showBadgeholderModal={props.showBadgeholderModal} isSubmitted={props.isSubmitted} showFundingModal={props.showFundingModal} castVote={props.castVote}></Main>
       </div>
     </div>
   );
@@ -551,8 +537,7 @@ export default function Nominations({ nominations }) {
   const [showFundingModal, setShowFundingModal] = useState(false)
   const [badgeholders, setBadgeholders] = useState()
   const [streamingData, setStreamingData] = useState()
-
-  console.log(nominations);
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   function updateVote(index, plus) {
     const modBallot = ballot;
@@ -578,7 +563,6 @@ export default function Nominations({ nominations }) {
       "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
     ]
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
-    console.log(signer)
     // await retroContract.connect(signer).getBadgeHolderStatus(roundNum, badgeAddress);
   }
 
@@ -589,11 +573,11 @@ export default function Nominations({ nominations }) {
   }
 
   async function checkVotingState() {
-    return 1;
+    return nominations.votingState;
   }
 
   async function castVote() {
-    console.log('voted', ballot)
+    setIsSubmitted(true)
   }
 
   const router = useRouter()
@@ -615,7 +599,7 @@ export default function Nominations({ nominations }) {
     const address = await signer.getAddress()
     const signedMessage = await signer.signMessage(createSiweMessage(
       address,
-      "Welcome to Retro."
+      "Welcome to Retr0x."
     ));
     window.localStorage.setItem('signedMessage', signedMessage);
     window.localStorage.setItem('userAddress', address)
@@ -678,7 +662,7 @@ export default function Nominations({ nominations }) {
       <meta name="description" content="Generated by create next app" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Layout roundID={roundID} roundName={roundID && round.name} round={roundID && round} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominations.nominationData.find(o => o.id == nomination)} nominationData={nominations.nominationData} voteData={nominations.voteData} canVote={canVote} votingState={votingState} updateVote={updateVote} votesRemaining={votesRemaining} votedOnObject={votedOnObject} showChartModal={() => setShowChartModal(true)} showBadgeholderModal={() => setShowBadgeholderModal(true)} showFundingModal={() => setShowFundingModal(true)} castVote={() => castVote}></Layout>
+    <Layout roundID={roundID} roundName={roundID && round.name} round={roundID && round} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominations.nominationData.find(o => o.id == nomination)} nominationData={nominations.nominationData} voteData={nominations.voteData} canVote={canVote} votingState={votingState} updateVote={updateVote} votesRemaining={votesRemaining} votedOnObject={votedOnObject} showChartModal={() => setShowChartModal(true)} isSubmitted={isSubmitted} showBadgeholderModal={() => setShowBadgeholderModal(true)} showFundingModal={() => setShowFundingModal(true)} castVote={() => castVote}></Layout>
     {showChartModal && <ChartModal close={() => setShowChartModal(false)} voteData={nominations.voteData}></ChartModal>}
     {showBadgeholderModal && <BadgeholderModal close={() => setShowBadgeholderModal(false)} badgeholderList={nominations.voteData['Badgeholder']}></BadgeholderModal>}
     {showFundingModal && <FundingModal close={() => setShowFundingModal(false)}></FundingModal>}
@@ -694,7 +678,8 @@ export async function getServerSideProps({ query }) {
     props: {
       nominations: {
         nominationData: query.id == 1 ? nominationsData : fakeNominationsData,
-        voteData: query.id == 1 ? optimismVoteData : fakeVoteData
+        voteData: query.id == 1 ? optimismVoteData : fakeVoteData,
+        votingState: query.id == 1 ? 2 : 1
       }
     }
   }
