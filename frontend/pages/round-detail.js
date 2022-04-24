@@ -10,6 +10,8 @@ const unorderedNominationsData = require('../data/optimismNominations.json');
 const optimismVoteData = require('../data/optimismVotes.json');
 import {Doughnut} from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
+import ChartModal from './_components/ChartModal'
+import BadgeholderModal from './_components/BadgeholderModal'
 // import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
 ChartJS.register(ArcElement, Tooltip);
 const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
@@ -54,46 +56,6 @@ function createDoughnutData(project, legend) {
       returnData.datasets[0].data.push(value);
       // returnData.labels.push(legend[key]);
       returnData.labels.push(legend[key]);
-      returnData.datasets[0].backgroundColor.push(createColor());
-      returnData.datasets[0].hoverBackgroundColor.push(createColor());
-    }
-  }
-  return returnData;
-}
-
-
-function createDoughnutRoundData(voteData) {
-  let voteDataCopy = JSON.parse(JSON.stringify(voteData));
-  delete voteDataCopy.Badgeholder;
-  // if (project === undefined) {
-  //   project = [];
-  // }
-  const returnData = {
-  labels: [],
-  datasets: [{
-    data: [],
-    backgroundColor: [],
-    hoverBackgroundColor: [],
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  }]};
-  for (const [key, value] of Object.entries(voteDataCopy)) {
-    if (key == 'SUM'){
-      break
-    }
-    if (value != null) {
-      returnData.datasets[0].data.push(value[Object.keys(value).length-4]);
-      // console.log(value[`${value.length-4}`]);
-      // console.log(`value['${value.length-4}']`);
-      console.log(value[Object.keys(value).length-4])
-      // console.log(Object.entries(voteDataCopy).length - 4)
-      // returnData.labels.push(legend[key]);
-      returnData.labels.push(key);
       returnData.datasets[0].backgroundColor.push(createColor());
       returnData.datasets[0].hoverBackgroundColor.push(createColor());
     }
@@ -342,6 +304,30 @@ const Main = (props) => (
           <span className="block text-gray-500">Nominations</span>
         </div>
       </div>
+      {props.votingState == 2 ?
+        <div className="flex items-center p-8 bg-white rounded-xl shadow-md" onClick={props.setShowChartModal}>
+          <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-400 to-indigo-300 rounded-full mr-6">
+            <svg
+              aria-hidden="true"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="h-6 w-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
+            </svg>
+          </div>
+          <div>
+            <span className="block text-2xl font-bold">Voting results</span>
+            <span className="block text-gray-500">Click to view results</span>
+          </div>
+        </div>
+        :
       <div className="flex items-center p-8 bg-white rounded-xl shadow-md">
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-400 to-indigo-300 rounded-full mr-6">
           <svg
@@ -364,7 +350,8 @@ const Main = (props) => (
           <span className="block text-gray-500">Until voting closes</span>
         </div>
       </div>
-      <div className="flex items-center p-8 bg-white rounded-xl shadow-md">
+      }
+      <div className="flex items-center p-8 bg-white rounded-xl shadow-md" onClick={props.showBadgeholderModal}>
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-500 to-yellow-300 rounded-full mr-6">
           <svg
             aria-hidden="true"
@@ -382,7 +369,7 @@ const Main = (props) => (
           </svg>
         </div>
         <div>
-          <span className="inline-block text-2xl font-bold">{Object.keys(props.voteData.Badgeholder).length - 4}</span>
+          <span className="inline-block text-2xl font-bold">{Object.keys(props.voteData.Badgeholder).length}</span>
           <span className="block text-gray-500">Badgeholders</span>
         </div>
       </div>
@@ -489,7 +476,6 @@ const Main = (props) => (
             <div className="flex items-center justify-center p-2 text-gray-400 text-3xl font-semibold bg-gray-100 border-2 border-gray-200 border-dashed rounded-md">
               <div className='w-4/5 h-2/5'>
                 <Doughnut data={createDoughnutData(props.voteData[props.nomination.projectName], props.voteData.Badgeholder)} width={400} height={400} options={options}/>
-                <Doughnut data={createDoughnutRoundData(props.voteData)} width={400} height={400} options={options}/>
               </div>
             </div>
             <div className="mt-2 text-center">Distribution of votes</div>
@@ -514,7 +500,7 @@ function Layout(props) {
 
       <div className="flex-grow text-gray-800">
         <Header signIn={props.signIn} address={props.address}></Header>
-        <Main roundID={props.roundID} roundName={props.roundName} nomination={props.nomination} selectNomination={props.selectNomination} nominationData={props.nominationData} voteData={props.voteData} canVote={props.canVote} votingState={props.votingState} updateVote={props.updateVote} votesRemaining={props.votesRemaining} votedOnObject={props.votedOnObject}></Main>
+        <Main roundID={props.roundID} roundName={props.roundName} nomination={props.nomination} selectNomination={props.selectNomination} nominationData={props.nominationData} voteData={props.voteData} canVote={props.canVote} votingState={props.votingState} updateVote={props.updateVote} votesRemaining={props.votesRemaining} votedOnObject={props.votedOnObject} setShowChartModal={props.showChartModal} showBadgeholderModal={props.showBadgeholderModal}></Main>
       </div>
     </div>
   );
@@ -529,6 +515,9 @@ export default function Nominations() {
   const [canVote, setCanVote] = useState(false);
   const [votingState, setVotingState] = useState(0);
   const [votedOnObject, setVotedOnObject] = useState({});
+  const [showChartModal, setShowChartModal] = useState(false)
+  const [showBadgeholderModal, setShowBadgeholderModal] = useState(false)
+  const [badgeholders, setBadgeholders] = useState()
 
   function updateVote(index, plus) {
     const modBallot = ballot;
@@ -599,6 +588,16 @@ export default function Nominations() {
   }, []);
 
   useEffect(() => {
+    if (!badgeholders) {
+      let bagdeHolderData = optimismVoteData['Badgeholder'];
+      for (let i = 0; i < 2; i++) {
+        delete bagdeHolderData[Object.keys(bagdeHolderData).length - 1]
+      }
+      setBadgeholders(bagdeHolderData)
+    }
+  }, []);
+
+  useEffect(() => {
     async function foo() {
       const votingState = await checkVotingState();
       if (votingState == 1) {
@@ -619,6 +618,20 @@ export default function Nominations() {
     foo();
   }, [])
 
+  const handleKeyPress = useCallback((event) => {
+    if (event.key == "Escape") {
+      setShowChartModal(false);
+      setShowBadgeholderModal(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   return (
     <>
     <Head>
@@ -626,7 +639,9 @@ export default function Nominations() {
       <meta name="description" content="Generated by create next app" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)} nominationData={nominationsData} voteData={optimismVoteData} canVote={canVote} votingState={votingState} updateVote={updateVote} votesRemaining={votesRemaining} votedOnObject={votedOnObject}></Layout>
+    <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)} nominationData={nominationsData} voteData={optimismVoteData} canVote={canVote} votingState={votingState} updateVote={updateVote} votesRemaining={votesRemaining} votedOnObject={votedOnObject} showChartModal={() => setShowChartModal(true)} showBadgeholderModal={() => setShowBadgeholderModal(true)}></Layout>
+    {showChartModal && <ChartModal close={() => setShowChartModal(false)} voteData={optimismVoteData}></ChartModal>}
+    {showBadgeholderModal && <BadgeholderModal close={() => setShowBadgeholderModal(false)} badgeholderList={badgeholders}></BadgeholderModal>}
     </>
   );
 }
