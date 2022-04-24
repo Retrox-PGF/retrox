@@ -251,12 +251,25 @@ function Layout(props) {
 export default function NewNomination() {
   const [address, setAddress] = useState('');
   const [ipfs, setIpfs] = useState(null);
+  const router = useRouter()
+  const roundID = router.query.id;
 
   useEffect(() => {
     setIpfs(create({
       url: 'https://ipfs.infura.io:5001/api/v0',
     }));
   }, []);
+
+  async function contractInitSubmission(roundNum, nominationURI, address){
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const retroAddress = "0xf9b9D7dBb7c2a49AB3D021D9aeC8A7C9d7f890AB"
+    const retroABI = [
+      "function nominate(uint256 roundNum, string memory nominationURI, address recipient) public payable"
+    ]
+    const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
+    await retroContract.connect(signer).nominate(roundNum, nominationURI, address, {value:ethers.utils.parseEther("0.01")});
+  }
 
   async function formSubmit(event) {
     event.preventDefault();
@@ -274,6 +287,9 @@ export default function NewNomination() {
       ipfsURI: ipfsURI,
       recipientAddress: recipientAddress.value
     })
+    console.log(roundID)
+    console.log(recipientAddress.value)
+    await contractInitSubmission(roundID, ipfsURI, recipientAddress.value)
     // create transaction with staking
   }
 
@@ -284,7 +300,7 @@ export default function NewNomination() {
     const address = await signer.getAddress()
     const signedMessage = await signer.signMessage(createSiweMessage(
       address,
-      "Welcome to Retro."
+      "Welcome to Retr0x."
     ));
     window.localStorage.setItem('signedMessage', signedMessage);
     window.localStorage.setItem('userAddress', address)
