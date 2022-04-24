@@ -1,5 +1,5 @@
 const FundingModal = (props) => {
-  
+
     return (
       <>
         <div
@@ -9,11 +9,12 @@ const FundingModal = (props) => {
             <div className="border rounded-2xl shadow-lg relative bg-white flex flex-col w-full outline-none focus:outline-none" onClick={e => {e.stopPropagation();}}>
               <div className="relative px-20 py-8 flex-auto mx-auto text-center text-xl">
                 <h2 className="font-bold text-3xl my-4 text-blue-600">Funding Information</h2>
+                <div className="flex flex-col">
                 <text>This round is funded by Optimism's donation of $1 million of Optimism Network Fees</text>
-                <div></div>
-                <a href={'https://medium.com/ethereum-optimism/retropgf-experiment-1-1-million-dollars-for-public-goods-f7e455cbdca'} target="_blank" className="m-1 text-blue-500 hover:text-blue-700">
+                <a href={'https://medium.com/ethereum-optimism/retropgf-experiment-1-1-million-dollars-for-public-goods-f7e455cbdca'} target="_blank" className="mt-4 text-blue-500 hover:text-blue-700">
                     Article
                 </a>
+                </div>
               </div>
             </div>
           </div>
@@ -22,6 +23,5 @@ const FundingModal = (props) => {
       </>
     );
   };
-  
+
   export default FundingModal;
-  

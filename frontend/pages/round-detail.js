@@ -18,11 +18,6 @@ import FundingModal from './_components/FundingModal'
 ChartJS.register(ArcElement, Tooltip);
 const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
 
-function createColor() {
-  let n = (Math.random() * 0xfffff * 1000000).toString(16);
-  return '#' + n.slice(0, 6);
-}
-
 const options = {
   plugins: {
     tooltip : {
@@ -211,31 +206,6 @@ const Aside = () => (
         </a>
 
       </motion.nav>
-      <div className="inline-flex items-center justify-center h-20 w-20 border-t border-gray-700">
-        <button className="p-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg">
-          <span className="sr-only">Settings</span>
-          <svg
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="h-6 w-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-        </button>
-      </div>
     </div>
   </motion.aside>
 );
@@ -329,25 +299,31 @@ const Main = (props) => (
         </a>
         </Link>
       </div>}
+      {props.votingState == 2 &&
+      <div className="flex flex-wrap items-start justify-end -mb-3">
+        <a className="inline-flex px-5 py-3 text-white bg-gradient-to-r from-blue-600 to-green-600 hover:from-green-600 hover:to-blue-600 rounded-xl shadow-md ml-6 mb-3" href='/optimism.csv' download>
+        <svg
+        aria-hidden="true"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        className="flex-shrink-0 h-6 w-6 text-white -ml-1 mr-2"
+        xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><path d="M200,224H56a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h96l56,56V216A8,8,0,0,1,200,224Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><polyline points="152 32 152 88 208 88" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></polyline><polyline points="100 156 128 184 156 156" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></polyline><line x1="128" y1="120" x2="128" y2="184" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line></svg>
+          Download Data
+        </a>
+      </div>}
     </div>
 
     <section className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
       <div className="flex items-center p-8 bg-white rounded-xl shadow-md">
-        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-700 to-purple-600 rounded-full mr-6">
+        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-700 to-purple-400 rounded-full mr-6">
           <svg
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="h-6 w-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
+          aria-hidden="true"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="h-9 w-9"
+          xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><circle cx="128" cy="140" r="40" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></circle><path d="M196,116a59.8,59.8,0,0,1,48,24" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M12,140a59.8,59.8,0,0,1,48-24" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M70.4,216a64.1,64.1,0,0,1,115.2,0" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M60,116A32,32,0,1,1,91.4,78" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><path d="M164.6,78A32,32,0,1,1,196,116" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path></svg>
         </div>
         <div>
           <span className="block text-2xl font-bold">{props.nominationData.length}</span>
@@ -356,21 +332,14 @@ const Main = (props) => (
       </div>
       {props.votingState == 2 ?
         <div className="flex items-center p-8 bg-white rounded-xl shadow-md" onClick={props.setShowChartModal}>
-          <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-400 to-indigo-300 rounded-full mr-6">
+          <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-6">
             <svg
-              aria-hidden="true"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-              />
-            </svg>
+            aria-hidden="true"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="h-9 w-9"
+            xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><line x1="96" y1="56" x2="96" y2="200" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><path d="M24,167.2a7.9,7.9,0,0,1,6.4-7.8,32.1,32.1,0,0,0,0-62.8A7.9,7.9,0,0,1,24,88.8V64a8,8,0,0,1,8-8H224a8,8,0,0,1,8,8V88.8a7.9,7.9,0,0,1-6.4,7.8,32.1,32.1,0,0,0,0,62.8,7.9,7.9,0,0,1,6.4,7.8V192a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path></svg>
           </div>
           <div>
             <span className="block text-2xl font-bold">Voting results</span>
@@ -379,7 +348,7 @@ const Main = (props) => (
         </div>
         :
       <div className="flex items-center p-8 bg-white rounded-xl shadow-md">
-        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-400 to-indigo-300 rounded-full mr-6">
+        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-6">
           <svg
             aria-hidden="true"
             fill="none"
@@ -402,21 +371,14 @@ const Main = (props) => (
       </div>
       }
       <div className="flex items-center p-8 bg-white rounded-xl shadow-md" onClick={props.showBadgeholderModal}>
-        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-green-500 to-yellow-300 rounded-full mr-6">
+        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-600 to-red-600 rounded-full mr-6">
           <svg
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="h-6 w-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-            />
-          </svg>
+          aria-hidden="true"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="h-9 w-9"
+          xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="#ffffff" viewBox="0 0 256 256"><circle cx="128" cy="136" r="32" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></circle><path d="M80,192a60,60,0,0,1,96,0" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path><rect x="32" y="48" width="192" height="160" rx="8" transform="translate(256) rotate(90)" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></rect><line x1="96" y1="64" x2="160" y2="64" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line></svg>
         </div>
         <div>
           <span className="inline-block text-2xl font-bold">{props.voteData && Object.keys(props.voteData['Badgeholder']).length - 4}</span>
@@ -426,21 +388,14 @@ const Main = (props) => (
       <div className="flex items-center p-8 bg-white rounded-xl shadow-md"
       //onClick={props.votingState == 2 ? props.showStreamingModal : undefined }
       onClick={props.showFundingModal}>
-        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-400 to-pink-400 rounded-full mr-6">
+        <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-red-500 to-purple-700 rounded-full mr-6">
           <svg
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="h-6 w-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-            />
-          </svg>
+          aria-hidden="true"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="h-9 w-9"
+          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="16" y="64" width="224" height="128" rx="8" fill="none" stroke="#fffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></rect><circle cx="128" cy="128" r="32" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></circle><line x1="176" y1="64" x2="240" y2="120" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><line x1="176" y1="192" x2="240" y2="136" fill="none" stroke="#fffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><line x1="80" y1="64" x2="16" y2="120" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><line x1="80" y1="192" x2="16" y2="136" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line></svg>
         </div>
         <div>
           <span className="block text-2xl font-bold">$1M</span>
@@ -451,8 +406,10 @@ const Main = (props) => (
 
     <section className="grid md:grid-cols-2 xl:grid-cols-4 xl:grid-rows-3 xl:grid-flow-col gap-6">
       <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl shadow-md">
-        <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
-          Nominations
+        <div className="flex flex-row justify-between">
+          <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
+            Nominations
+          </div>
         </div>
         <div className="p-4 flex-grow">
         <div className="overflow-y-auto" style={{ maxHeight: "24rem" }}>
@@ -496,13 +453,16 @@ const Main = (props) => (
           </div>
           </div>
           <div className="flex flex-col content-start overflow-auto">
-            {Object.keys(props.votedOnObject).map((obj, i) => (
-              <div className="px-3 py-1 text-lg">
-                <button className="text-blue-500 hover:text-blue-800" onClick={() => props.selectNomination(parseInt(obj) + 1)}>
-                {props.nominationData.find(o => o.id == parseInt(obj) + 1).projectName}: {props.votedOnObject[obj]} votes
-                </button>
-              </div>
-            ))}
+            {Object.keys(props.votedOnObject).length ?
+              (Object.keys(props.votedOnObject).map((obj, i) => (
+                <div className="px-3 py-1 text-lg">
+                  <button className="text-blue-500 hover:text-blue-800" onClick={() => props.selectNomination(parseInt(obj) + 1)}>
+                  {props.nominationData.find(o => o.id == parseInt(obj) + 1).projectName}: {props.votedOnObject[obj]} votes
+                  </button>
+                </div>
+              )))
+              :
+            <div className="text-center text-lg">No votes yet</div>}
           </div>
           <div className="flex flex-col py-2">
           <div className="flex flex-row items-center justify-center mt-2 py-3 border-t">
@@ -616,14 +576,14 @@ export default function Nominations({ nominations }) {
       "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
     ]
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
-    console.log(badgeAddress)
-    await retroContract.connect(signer).getBadgeHolderStatus(roundNum, badgeAddress);
+    console.log(signer)
+    // await retroContract.connect(signer).getBadgeHolderStatus(roundNum, badgeAddress);
   }
 
- 
 
   async function checkCanVote(address) {
-    return (await contractInitBadgeholder(roundID, address)) == 1
+    // return (await contractInitBadgeholder(roundID, address)) == 1
+    return 1
   }
 
   async function checkVotingState() {
@@ -691,8 +651,8 @@ export default function Nominations({ nominations }) {
         setVotingState(votingState);
       }
     }
-    foo();
-  }, [])
+    if (address) {foo()};
+  }, [address])
 
   const handleKeyPress = useCallback((event) => {
     if (event.key == "Escape") {
@@ -720,19 +680,17 @@ export default function Nominations({ nominations }) {
     {showChartModal && <ChartModal close={() => setShowChartModal(false)} voteData={optimismVoteData}></ChartModal>}
     {showBadgeholderModal && <BadgeholderModal close={() => setShowBadgeholderModal(false)} badgeholderList={optimismVoteData['Badgeholder']}></BadgeholderModal>}
     {showFundingModal && <FundingModal close={() => setShowFundingModal(false)}></FundingModal>}
-
-    {}
     </>
   );
 }
 
 
-import { getNominations } from "../lib/getNominations";
-
-export async function getServerSideProps({ query }) {
-  return {
-    props: {
-      nominations: await getNominations(query.id)
-    }
-  }
-}
+// import { getNominations } from "../lib/getNominations";
+//
+// export async function getServerSideProps({ query }) {
+//   return {
+//     props: {
+//       nominations: await getNominations(query.id)
+//     }
+//   }
+// }
