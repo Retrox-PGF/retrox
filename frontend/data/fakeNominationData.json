@@ -1,0 +1,26 @@
+[
+  {
+      "": 0,
+      "projectName": "LearnWeb3 DAO",
+      "timestamp": "10/5/2021 13:49:38",
+      "nominatorName": "Fernando",
+      "nominatorEmail": "Almansa",
+      "projectURL": "https://www.learnweb3.io/",
+      "projectLeadName": "Sneh Koul",
+      "projectLeadEmail": "hello@supranational.net",
+      "rationale": "LearnWeb3 was founded with one goal in mind: to onboard as many developers into Web3 as possible. In the early 2000s, we saw an unprecedented boom in web2 that lead us to the internet we have today. In 2022, the same thing is happening again with Web3 and the metaverse. Hence, with all the impressive work done to onboard developers, LearnWeb3 DAO deserves recognition.",
+      "id": 1
+    },
+    {
+      "": 1,
+      "projectName": "Retr0x",
+      "timestamp": "10/5/2021 13:49:38",
+      "nominatorName": "Kyle",
+      "nominatorEmail": "Almansa",
+      "projectURL": "https://www.demo.com/",
+      "projectLeadName": "Jan",
+      "projectLeadEmail": "jan@retr0x.com",
+      "rationale": "Retr0x aims to bring retrospective public goods funding to the mainstream and allow for a quick and transparent implementation of RPGF on-chain.",
+      "id": 2
+    }
+]
