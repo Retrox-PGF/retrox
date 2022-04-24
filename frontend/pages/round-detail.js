@@ -544,13 +544,14 @@ export default function Nominations() {
       "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
     ]
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
+    console.log(badgeAddress)
     await retroContract.connect(signer).getBadgeHolderStatus(roundNum, badgeAddress);
   }
 
  
 
-  function checkCanVote(address) {
-    return contractInitBadgeholder(roundID, address)==1
+  async function checkCanVote(address) {
+    return (await contractInitBadgeholder(roundID, address)) == 1
   }
 
   async function checkVotingState() {
