@@ -12,6 +12,7 @@ import axios from 'axios'
 const domain = "localhost";
 const origin = "https://localhost/login";
 
+
 function createSiweMessage (address, statement) {
   const siweMessage = new siwe.SiweMessage({
     domain,
@@ -198,7 +199,7 @@ const Main = (props) => (
               </div>
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Initial funding amount (in eth)</label>
-                <input type="number" placeholder="Retro" name="funding" className="border rounded-xl p-2" required></input>
+                <input type="number" placeholder="Retro" name="funding" step="0.001" className="border rounded-xl p-2" required></input>
               </div>
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Badgeholders (entries on a seperate line)</label>
@@ -231,6 +232,19 @@ function Layout(props) {
       </div>
     </div>
   );
+}
+
+
+async function contractInitRound(roundURI, badgeholders, value){
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  console.log(signer)
+  const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b"
+  const retroABI = [
+    "function createRound(string memory roundURI, address[] memory badgeHolders) public payable"
+  ]
+  const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
+  await retroContract.connect(signer).createRound(roundURI, badgeholders, {value:ethers.utils.parseEther(`${value}`)});
 }
 
 export default function NewRound() {
@@ -266,7 +280,9 @@ export default function NewRound() {
       addresses: addressArray
     })
     console.log(metadata)
-    // create transaction with staking
+    // create transaction with value locked
+    await contractInitRound(ipfsURI, addressArray, funding.value)
+    
   }
 
   async function logIn() {
@@ -276,7 +292,7 @@ export default function NewRound() {
     const address = await signer.getAddress()
     const signedMessage = await signer.signMessage(createSiweMessage(
       address,
-      "Welcome to Retro."
+      "Welcome to Retr0x."
     ));
     window.localStorage.setItem('signedMessage', signedMessage);
     window.localStorage.setItem('userAddress', address)
