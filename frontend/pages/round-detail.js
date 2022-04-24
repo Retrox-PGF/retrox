@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import { rounds } from '../data/rounds'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useCallback } from 'react'
@@ -107,7 +108,7 @@ const Aside = () => (
   className="hidden sm:flex sm:flex-col">
   <Link href="/">
     <a
-      className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-green-500 to-blue-700 hover:bg-blue-500 focus:bg-blue-500 text-white"
+      className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-purple-500 to-blue-700 hover:bg-blue-500 focus:bg-blue-500 text-white"
     >
       Retro
     </a>
@@ -258,6 +259,7 @@ const Main = (props) => (
         <h1 className="text-4xl font-semibold mb-2">{props.roundName}</h1>
         <h2 className="text-gray-600 ml-0.5">Round information sentence?</h2>
       </div>
+      {props.votingState == 0 &&
       <div className="flex flex-wrap items-start justify-end -mb-3">
         <Link href={'/new-nomination?id=' + props.roundID}>
         <a className="inline-flex px-5 py-3 text-white bg-gradient-to-r from-blue-700 to-purple-600 hover:from-purple-700 hover:to-blue-800 rounded-xl shadow-md ml-6 mb-3">
@@ -278,7 +280,7 @@ const Main = (props) => (
           Create new nomination
         </a>
         </Link>
-      </div>
+      </div>}
     </div>
 
     <section className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -373,7 +375,7 @@ const Main = (props) => (
           <span className="block text-gray-500">Badgeholders</span>
         </div>
       </div>
-      <div className="flex items-center p-8 bg-white rounded-xl shadow-md">
+      <div className="flex items-center p-8 bg-white rounded-xl shadow-md" onClick={props.votingState == 2 ? props.showStreamingModal : undefined }>
         <div className="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-white bg-gradient-to-r from-blue-400 to-pink-400 rounded-full mr-6">
           <svg
             aria-hidden="true"
@@ -464,10 +466,10 @@ const Main = (props) => (
               {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 4] : 0} votes
             </div>
             <div className="px-6 py-2 text-lg">
-              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} of votes
+              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 3] : 0} of votes
             </div>
             <div className="px-6 py-2 text-lg">
-              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 3] : 0} awarded
+              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} awarded
 
             </div>
           </div>
@@ -650,6 +652,7 @@ export default function Nominations() {
     <Layout roundID={roundID} roundName={roundID && round.name} signIn={logIn} address={address} selectNomination={selectNomination} nomination={nominationsData.find(o => o.id == nomination)} nominationData={nominationsData} voteData={optimismVoteData} canVote={canVote} votingState={votingState} updateVote={updateVote} votesRemaining={votesRemaining} votedOnObject={votedOnObject} showChartModal={() => setShowChartModal(true)} showBadgeholderModal={() => setShowBadgeholderModal(true)}></Layout>
     {showChartModal && <ChartModal close={() => setShowChartModal(false)} voteData={optimismVoteData}></ChartModal>}
     {showBadgeholderModal && <BadgeholderModal close={() => setShowBadgeholderModal(false)} badgeholderList={badgeholders}></BadgeholderModal>}
+    {}
     </>
   );
 }
