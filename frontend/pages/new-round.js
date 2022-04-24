@@ -53,7 +53,7 @@ const Aside = () => (
   className="hidden sm:flex sm:flex-col">
   <Link href="/">
     <a
-      className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-green-500 to-blue-700 hover:bg-blue-500 focus:bg-blue-500 text-white"
+      className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-purple-600 to-blue-700 hover:bg-blue-500 focus:bg-blue-500 text-white"
     >
       Retro
     </a>
@@ -156,14 +156,6 @@ const Header = (props) => (
         />
       </svg>
     </button>
-    <div className="relative w-full max-w-md sm:-ml-2 flex items-center">
-      <input
-        type="text"
-        role="search"
-        placeholder="Search..."
-        className="py-2 pl-10 pr-4 w-full border placeholder-gray-400 focus:bg-gray-50 rounded-lg"
-      />
-    </div>
     <div className="flex flex-shrink-0 items-center ml-auto">
       <button className="inline-flex items-center p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg" onClick={props.address ? null : () => props.signIn()}>
         <span className="sr-only">User Menu</span>
