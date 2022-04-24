@@ -13,9 +13,9 @@ const optimismVoteData = require('../data/optimismVotes.json');
 const fakeVoteData = require('../data/fakeVotes.json');
 import {Doughnut} from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
-import ChartModal from '../_components/ChartModal'
-import BadgeholderModal from '../_components/BadgeholderModal'
-import FundingModal from '../_components/FundingModal'
+import ChartModal from '../components/ChartModal'
+import BadgeholderModal from '../components/BadgeholderModal'
+import FundingModal from '../components/FundingModal'
 // import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
 ChartJS.register(ArcElement, Tooltip);
 const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
