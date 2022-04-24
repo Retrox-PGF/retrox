@@ -74,6 +74,8 @@ contract Retro {
     mapping (uint256 => Round) public rounds; 
     mapping (uint256 => mapping (uint256 => Nomination)) public nominations;
     mapping(uint256 => mapping (address => uint256)) public badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
+    mapping(uint256  => uint256) public amounts;
+    mapping(uint256 => uint256) public flowRates;
 
     uint256 public roundCounter;
 
@@ -136,9 +138,11 @@ contract Retro {
     function disperseFunds(uint roundNum) public {
         require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
         uint totalNumVotes = rounds[roundNum].totalVotes;
-        uint flowRate = 2.628*10**6;
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
             uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
+            console.log("amount");
+            console.log(amount);
+            amounts[i] = amount;
             if(amount > minDisperseAmount) {
                 (bool sent,) = nominations[roundNum][i].recipient.call{value: amount/2}("");
                 require(sent, 'Failed to send');
@@ -206,16 +210,20 @@ contract Retro {
         }
     }
 
-    function getRoundData(uint256 roundNum) public view returns (Round memory) {
-        return rounds[roundNum];
+    function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256) {
+        return (rounds[roundNum].roundURI, rounds[roundNum].startBlockTimestamp, rounds[roundNum].fundsCommitted, rounds[roundNum].nominationCounter, rounds[roundNum].totalVotes);
     }
 
-    function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (Nomination memory) {
-        return nominations[roundNum][nominationNum];
+    function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (string memory, address, uint256) {
+        return (nominations[roundNum][nominationNum].nominationURI, nominations[roundNum][nominationNum].recipient, nominations[roundNum][nominationNum].numVotes);
     }
 
     function getNextRoundNum() public view returns (uint256) {
         return roundCounter;
+    }
+
+    function getAmountData(uint256 nominationNum) public view returns (uint256) {
+        return amounts[nominationNum];
     }
 
     function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256) {    
