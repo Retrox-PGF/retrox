@@ -12,7 +12,7 @@ const BadgeholderModal = (props) => {
               <h2 className="font-bold text-3xl my-4 text-blue-600">Badgeholders</h2>
               <div className="grid grid-rows-4 grid-cols-3">
               {Object.keys(props.badgeholderList).map((key, value) => (
-                <div className="m-1">{props.badgeholderList[key]}</div>
+                (key < Object.keys(props.badgeholderList).length - 4 && <div className="m-1">{props.badgeholderList[key]}</div>)
               ))}
               </div>
             </div>

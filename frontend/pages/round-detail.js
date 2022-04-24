@@ -369,7 +369,7 @@ const Main = (props) => (
           </svg>
         </div>
         <div>
-          <span className="inline-block text-2xl font-bold">{Object.keys(props.voteData.Badgeholder).length}</span>
+          <span className="inline-block text-2xl font-bold">{Object.keys(props.voteData.Badgeholder).length - 4}</span>
           <span className="block text-gray-500">Badgeholders</span>
         </div>
       </div>
@@ -464,10 +464,10 @@ const Main = (props) => (
               {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 4] : 0} votes
             </div>
             <div className="px-6 py-2 text-lg">
-              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 3] : 0} of votes
+              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} of votes
             </div>
             <div className="px-6 py-2 text-lg">
-              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 1] : 0} awarded
+              {props.voteData[props.nomination.projectName] ? props.voteData[props.nomination.projectName][Object.keys(props.voteData.Badgeholder).length - 3] : 0} awarded
 
             </div>
           </div>
@@ -549,7 +549,7 @@ export default function Nominations() {
   }
 
   async function checkVotingState() {
-    return 1;
+    return 2;
   }
 
   const router = useRouter()
@@ -592,9 +592,9 @@ export default function Nominations() {
   useEffect(() => {
     if (!badgeholders) {
       let bagdeHolderData = optimismVoteData['Badgeholder'];
-      for (let i = 0; i < 2; i++) {
-        delete bagdeHolderData[Object.keys(bagdeHolderData).length - 1]
-      }
+      // for (let i = 0; i < 2; i++) {
+      //   delete bagdeHolderData[Object.keys(bagdeHolderData).length - 1]
+      // }
       setBadgeholders(bagdeHolderData)
     }
   }, []);
