@@ -508,7 +508,7 @@ function Layout(props) {
   );
 }
 
-export default function Nominations() {
+export default function Nominations({ nominations }) {
   const N = 106
   const [address, setAddress] = useState('');
   const [nomination, setNomination] = useState(1);
@@ -520,6 +520,8 @@ export default function Nominations() {
   const [showChartModal, setShowChartModal] = useState(false)
   const [showBadgeholderModal, setShowBadgeholderModal] = useState(false)
   const [badgeholders, setBadgeholders] = useState()
+
+  console.log(nominations);
 
   function updateVote(index, plus) {
     const modBallot = ballot;
@@ -655,4 +657,15 @@ export default function Nominations() {
     {}
     </>
   );
+}
+
+
+import { getNominations } from "../lib/getNominations";
+
+export async function getServerSideProps({ query }) {
+  return {
+    props: {
+      nominations: await getNominations(query.id)
+    }
+  }
 }
