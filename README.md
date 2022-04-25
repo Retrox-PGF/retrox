@@ -14,8 +14,9 @@ The contract (retro.sol) which is at the heart of the scheme is found in retro/c
 
 To deploy the contract (private key needs to be added in retro/hardhat.config.js) :
 
-''' yarn hardhat deploy
+```
+yarn hardhat deploy
 yarn hardhat run scripts/sample-scripts.js --network optimism-kovan
-'''
+```
 
 The frontend is a Next.js App and a readme is attached in /frontend
