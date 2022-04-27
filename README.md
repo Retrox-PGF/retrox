@@ -1,6 +1,11 @@
  # On-Chain Retro-Generative Public Goods Funding
  
- <img src="/images/retro-01-2.jpg" width=20% height=20%>
+ <p align="center">
+   <img src="/images/retro-01-2.jpg" width=50% height=20%>
+</p>
+
+ 
+
  
 
 
