@@ -22,11 +22,11 @@ This was a winning submission to the ETH-Global Hackathon in Amsterdam in 2022: 
 
 The contract (retro.sol) which is at the heart of the scheme is found in retro/contracts/retro.sol 
 
-To deploy the contract (private key needs to be added in retro/hardhat.config.js) :
+To deploy the contract on (private key needs to be added in retro/hardhat.config.js) :
 
 ```
 yarn hardhat deploy
-yarn hardhat run scripts/sample-scripts.js --network optimism-kovan
+yarn hardhat run scripts/sample-scripts.js --network (your preferred network)
 ```
 
 The frontend is a Next.js App and a readme is attached in /frontend
