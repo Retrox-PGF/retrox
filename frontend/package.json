@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "axios": "^0.26.1",
     "chart.js": "^3.7.1",
     "dotenv": "^16.0.0",
     "ethers": "^5.5.1",

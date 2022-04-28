@@ -1,6 +1,4 @@
 const BadgeholderModal = (props) => {
-  console.log(props.badgeholderList)
-
   return (
     <>
       <div
