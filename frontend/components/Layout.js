@@ -6,7 +6,7 @@ export default function Layout(props) {
     <div className="flex bg-gray-100 min-h-screen">
       <Aside></Aside>
       <div className="flex-grow text-gray-800">
-        <Header signIn={props.signIn} address={props.address} search={false}></Header>
+        <Header search={false}></Header>
         {props.children}
       </div>
     </div>

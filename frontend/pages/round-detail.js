@@ -15,8 +15,7 @@ import { rounds } from '../data/rounds';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-
-import signInWithEthereum from '../lib/signInWithEthereum';
+import { useAccount } from 'wagmi';
 
 export default function Nominations({ nominations }) {
   //Modal
@@ -25,39 +24,12 @@ export default function Nominations({ nominations }) {
   const [showFundingModal, setShowFundingModal] = useState(false)
   //END
 
-  //MetaMask Login
-  const [address, setAddress] = useState('');
-
+  const [address, setAddress] = useState(false)
+  const { data: account } = useAccount();
   useEffect(() => {
-    if (!window.ethereum) {
-      return;
-    }
-    const accountWasChanged = (accounts) => {
-      setAddress(accounts[0]);
-    }
-    const getAndSetAccount = async () => {
-      const changedAccounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      setAddress(changedAccounts[0]);
-    }
-    const clearAccount = () => {
-      setAddress();
-    };
-    window.ethereum.on('accountsChanged', accountWasChanged);
-    window.ethereum.on('connect', getAndSetAccount);
-    window.ethereum.on('disconnect', clearAccount);
-    async function foo() {
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const address = await signer.getAddress();
-        setAddress(address)
-      } catch(error) {
-        return;
-      }
-    }
-    foo();
-  }, []);
-  //END
+    if (!account) return;
+    setAddress(account.address)
+  }, [account])
 
   //Get round
   const router = useRouter()
@@ -115,7 +87,6 @@ export default function Nominations({ nominations }) {
   }
 
   async function checkVotingState() {
-    console.log(nominations.votingState)
     return nominations.votingState;
   }
 
@@ -177,9 +148,7 @@ export default function Nominations({ nominations }) {
       title="Retr0x"
       description="Retro-generative public goods funding">
     </SiteHead>
-    <Layout
-      signIn={signInWithEthereum}
-      address={address}>
+    <Layout>
         <RoundDetailMain
           roundID={roundID}
           roundName={roundID && round.name}

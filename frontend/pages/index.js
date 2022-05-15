@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <div className="bg-[#050346] h-screen">
+    <div className="bg-[#090049] h-screen">
       <SiteHead title="Retr0x" description="Retro-generative public goods funding"></SiteHead>
 
       <main className="items-center justify-center text-center p-40">

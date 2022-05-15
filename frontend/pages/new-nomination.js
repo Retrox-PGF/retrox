@@ -8,43 +8,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { create } from 'ipfs-http-client';
 import { ethers } from 'ethers';
 
-import signInWithEthereum from '../lib/signInWithEthereum';
 import { contractInitNomination } from '../lib/contractInitNomination';
 
 export default function NewNomination() {
-  //MetaMask Login
-  const [address, setAddress] = useState('');
-
-  useEffect(() => {
-    if (!window.ethereum) {
-      return;
-    }
-    const accountWasChanged = (accounts) => {
-      setAddress(accounts[0]);
-    }
-    const getAndSetAccount = async () => {
-      const changedAccounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      setAddress(changedAccounts[0]);
-    }
-    const clearAccount = () => {
-      setAddress();
-    };
-    window.ethereum.on('accountsChanged', accountWasChanged);
-    window.ethereum.on('connect', getAndSetAccount);
-    window.ethereum.on('disconnect', clearAccount);
-    async function foo() {
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const address = await signer.getAddress();
-        setAddress(address)
-      } catch(error) {
-        return;
-      }
-    }
-    foo();
-  }, []);
-  //END
 
   //RoundID
   const router = useRouter()
@@ -89,9 +55,7 @@ export default function NewNomination() {
       title="Retr0x"
       description="Retro-generative public goods funding">
     </SiteHead>
-    <Layout
-      signIn={signInWithEthereum}
-      address={address}>
+    <Layout>
         <Main
           onSubmit={formSubmit}>
         </Main>
