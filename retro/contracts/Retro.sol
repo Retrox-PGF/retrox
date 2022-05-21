@@ -43,8 +43,6 @@ contract Retro {
     }
     
     uint256 constant tokensPerBadgeHolder = 100;
-    uint256 constant nominationDuration = 0;
-    uint256 constant votingDuration = 0;
     uint256 constant minRoundCreationThreshold = 1;
     uint256 constant minNominationThreshold = 1; 
     uint256 constant minDisperseAmount = 1;
@@ -106,7 +104,7 @@ contract Retro {
 
     function nominate(uint256 roundNum, string memory nominationURI, address recipient) public payable {
         require(msg.value >= minNominationThreshold, "Insufficient funds to nominate");
-        // check nomination period is valid
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= rounds[roundNum].nominationDuration, "Nomination period finished");
         Round storage round = rounds[roundNum];
         nominations[roundNum][round.nominationCounter].nominationURI = nominationURI;
         nominations[roundNum][round.nominationCounter].recipient = recipient;
@@ -116,7 +114,7 @@ contract Retro {
     }
 
     function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
-        // check voting period is valid for the round
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration && (block.timestamp - rounds[roundNum].startBlockTimestamp) <= rounds[roundNum].votingDuration, "Voting period not started or finished");
         require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "You are not eligible to vote or have already voted");
         Round storage round = rounds[roundNum];
         uint256 tokenSum;
@@ -140,7 +138,7 @@ contract Retro {
     }
 
     function disperseFunds(uint roundNum) public {
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), 'Only disperse funds after round is completed');
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), 'Only disperse funds after round is completed');
         uint totalNumVotes = rounds[roundNum].totalVotes;
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
             uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
@@ -216,7 +214,7 @@ contract Retro {
     }
 
     function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256) {
-        return (rounds[roundNum].roundURI, rounds[roundNum].startBlockTimestamp, rounds[roundNum].fundsCommitted, rounds[roundNum].nominationCounter, rounds[roundNum].totalVotes);
+        return (rounds[roundNum].roundURI, rounds[roundNum].startBlockTimestamp, rounds[roundNum].fundsCommitted, rounds[roundNum].nominationCounter, rounds[roundNum].totalVotes, rounds[roundNum].nominationDuration, rounds[roundNum].votingDuration);
     }
 
     function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (string memory, address, uint256) {
