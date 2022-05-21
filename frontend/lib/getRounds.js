@@ -1,9 +1,10 @@
 import { ethers } from "ethers"
+import { deployed_address } from '../contract_config.js';
 
 export async function getRounds() {
     const provider = new ethers.providers.JsonRpcProvider(process.env.INFURA_URL);
 
-    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b"
+    const retroAddress = deployed_address
     const retroABI = [
       "function getNextRoundNum() public view returns (uint256)",
       "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
