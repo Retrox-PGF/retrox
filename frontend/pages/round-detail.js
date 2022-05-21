@@ -54,7 +54,7 @@ export default function Nominations({ nominations }) {
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
     return await retroContract.getBadgeHolderStatus(roundID, badgeAddress);
   }
-  //
+  // END
 
   //Voting logic
   const [votesRemaining, setVotesRemaining] = useState(0);
@@ -92,7 +92,7 @@ export default function Nominations({ nominations }) {
     ]
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
     const round = await retroContract.getRoundData(roundID);
-    console.log(round[1])
+    // IMPLEMENT LOGIC HERE
     return nominations.votingState;
   }
 
