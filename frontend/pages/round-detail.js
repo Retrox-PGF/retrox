@@ -45,15 +45,14 @@ export default function Nominations({ nominations }) {
   //END
 
   //Badgeholder logic
-  async function contractInitBadgeholder(roundNum, badgeAddress){
+  async function contractInitBadgeholder(badgeAddress){
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b"
+    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b";
     const retroABI = [
       "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
     ]
-    const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
-    // await retroContract.connect(signer).getBadgeHolderStatus(roundNum, badgeAddress);
+    const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
+    return await retroContract.getBadgeHolderStatus(roundID, badgeAddress);
   }
   //
 
@@ -80,18 +79,32 @@ export default function Nominations({ nominations }) {
     getVotes(modBallot);
   }
 
-
   async function checkCanVote(address) {
-    // return (await contractInitBadgeholder(roundID, address)) == 1
-    return 1
+    const result = await contractInitBadgeholder(address);
+    return result != 0;
   }
 
   async function checkVotingState() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b";
+    const retroABI = [
+      "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
+    ]
+    const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
+    const round = await retroContract.getRoundData(roundID);
+    console.log(round[1])
     return nominations.votingState;
   }
 
   async function castVote() {
-    setIsSubmitted(true)
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b";
+    const retroABI = [
+      "function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public"
+    ]
+    const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
+    await retroContract.castVote(roundID, ballot);
+    setIsSubmitted(true);
   }
 
   function getVotes(ballot) {
