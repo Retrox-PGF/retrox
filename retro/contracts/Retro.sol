@@ -63,6 +63,8 @@ contract Retro {
         uint256 fundsCommitted;
         uint256 nominationCounter;
         uint256 totalVotes;
+        uint256 nominationDuration;
+        uint256 votingDuration;
     }
 
     struct Nomination {
@@ -71,13 +73,13 @@ contract Retro {
         uint256 numVotes;
     }
 
-    mapping (uint256 => Round) public rounds; 
-    mapping (uint256 => mapping (uint256 => Nomination)) public nominations;
-    mapping(uint256 => mapping (address => uint256)) public badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
-    mapping(uint256  => uint256) public amounts;
-    mapping(uint256 => uint256) public flowRates;
+    mapping (uint256 => Round) private rounds; 
+    mapping (uint256 => mapping (uint256 => Nomination)) private nominations;
+    mapping(uint256 => mapping (address => uint256)) private badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
+    mapping(uint256  => uint256) private amounts;
+    mapping(uint256 => uint256) private flowRates;
 
-    uint256 public roundCounter;
+    uint256 private roundCounter;
 
     event RetroSetup(address indexed initiator);
     event NewRound(string roundURI, uint256 startBlockTimestamp, uint256 fundsCommitted);
@@ -85,12 +87,14 @@ contract Retro {
     event NewVote(uint256 roundNum, address badgeHolder);
     event Disperse(address indexed recipient, uint256 amount);
 
-    function createRound(string memory roundURI, address[] memory badgeHolders) public payable {
+    function createRound(string memory roundURI, address[] memory badgeHolders, uint256 nominationDuration, uint256 votingDuration) public payable {
         require(msg.value >= minRoundCreationThreshold, "Insufficient funds to create a new round");
         rounds[roundCounter].roundURI = roundURI;
         rounds[roundCounter].badgeHolders = badgeHolders;
         rounds[roundCounter].startBlockTimestamp = block.timestamp;
         rounds[roundCounter].fundsCommitted = msg.value;
+        rounds[roundCounter].nominationDuration = nominationDuration;
+        rounds[roundCounter].votingDuration = votingDuration;
 
         for (uint256 i = 0; i < badgeHolders.length; i++) {
             badgeHolderVoteStatus[roundCounter][badgeHolders[i]] = 1;
@@ -136,7 +140,7 @@ contract Retro {
     }
 
     function disperseFunds(uint roundNum) public {
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (nominationDuration + votingDuration), 'Only disperse funds after round is completed');
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) >= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), 'Only disperse funds after round is completed');
         uint totalNumVotes = rounds[roundNum].totalVotes;
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
             uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
