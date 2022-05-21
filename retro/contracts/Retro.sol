@@ -213,7 +213,7 @@ contract Retro {
         }
     }
 
-    function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256) {
+    function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256, uint256, uint256) {
         return (rounds[roundNum].roundURI, rounds[roundNum].startBlockTimestamp, rounds[roundNum].fundsCommitted, rounds[roundNum].nominationCounter, rounds[roundNum].totalVotes, rounds[roundNum].nominationDuration, rounds[roundNum].votingDuration);
     }
 
