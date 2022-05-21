@@ -17,6 +17,7 @@ function NominationCard(props) {
 }
 
 function VotingStateCard(props) {
+  //do formatting with props.round
   return (
     <>
     {props.votingState == 2 ?
@@ -97,7 +98,8 @@ export default function ButtonBar(props) {
       </NominationCard>
       <VotingStateCard
         votingState={props.votingState}
-        showChartModal={props.showChartModal}>
+        showChartModal={props.showChartModal}
+        round={props.round}>
       </VotingStateCard>
       <BadgeholderCard
         showBadgeholderModal={props.showBadgeholderModal}

@@ -85,14 +85,10 @@ export default function Nominations({ nominations }) {
   }
 
   async function checkVotingState() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b";
-    const retroABI = [
-      "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
-    ]
-    const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-    const round = await retroContract.getRoundData(roundID);
-    // IMPLEMENT LOGIC HERE
+    // calculate times based on round:
+    // get current time
+    // substract time from endtime to check whether voting is closed
+    // convert time into votingState
     return nominations.votingState;
   }
 
