@@ -17,6 +17,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
+import deployed_address from 'contract_config.js';
+
 export default function Nominations({ nominations }) {
   //Modal
   const [showChartModal, setShowChartModal] = useState(false)
@@ -44,10 +46,10 @@ export default function Nominations({ nominations }) {
   }
   //END
 
-  //Badgeholder logic
+  //Badgeholder logic, status is as follows; {0 = inelligible (not whitelisted), 1 = eligible, 2 = voted}
   async function contractInitBadgeholder(badgeAddress){
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const retroAddress = "0x3cAD7cd0d54E0794D5864e9979B21a60E04fDC6b";
+    const retroAddress = "deployed_address";
     const retroABI = [
       "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
     ]
@@ -63,6 +65,7 @@ export default function Nominations({ nominations }) {
   const [votingState, setVotingState] = useState(0);
   const [votedOnObject, setVotedOnObject] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false)
+
   function updateVote(index, plus) {
     const modBallot = ballot;
 
@@ -81,7 +84,7 @@ export default function Nominations({ nominations }) {
 
   async function checkCanVote(address) {
     const result = await contractInitBadgeholder(address);
-    return result != 0;
+    return result == 1;
   }
 
   async function checkVotingState() {
