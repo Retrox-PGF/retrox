@@ -4,18 +4,22 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <div className="bg-[#090049] h-screen">
+    <div>
+      {/* SITE HEAD */}
       <SiteHead title="Retr0x" description="Retro-generative public goods funding"></SiteHead>
-
-      <main className="items-center justify-center text-center p-40">
-        <Image src='/logo.jpeg' width="600" height="400" className="mb-20"></Image>
-        <br></br>
-        <br></br>
-        <br></br>
-        <Link href="/rounds">
-          <a className="bg-white text-black p-4 rounded-2xl mt-20 z-50 text-lg">Launch app</a>
-        </Link>
-
+      {/* MAIN BODY */}
+      <main className='grid justify-center h-screen w-screen overflow-hidden'>
+        {/* MAIN GRID */}
+        <div className='bg-[#070048] grid justify-center w-screen'>
+          <div className='bg-[#070048] justify-content content-center grid'>
+            <Image src='/logo.jpeg' width="600" height="400" className=""></Image>
+          </div>
+          <div className='bg-[#070048] w-full justify-center grid'>
+            <Link href="/rounds">
+              <a className="bg-white text-black p-4 rounded-2xl my-20 z-50 text-lg h-16">Launch app</a>
+           </Link>
+          </div>
+        </div>
       </main>
     </div>
   )
