@@ -86,6 +86,8 @@ contract Retro {
     event Disperse(address indexed recipient, uint256 amount);
 
     function createRound(string memory roundURI, address[] memory badgeHolders, uint256 nominationDuration, uint256 votingDuration) public payable {
+        require(nominationDuration > 0, "Nomination period must be greater than zero");
+        require(votingDuration > 0, "Voting period must be greater than zero");
         require(msg.value >= minRoundCreationThreshold, "Insufficient funds to create a new round");
         rounds[roundCounter].roundURI = roundURI;
         rounds[roundCounter].badgeHolders = badgeHolders;
@@ -114,7 +116,8 @@ contract Retro {
     }
 
     function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration && ((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration] + rounds[roundNum].votingDuration)), "Voting period not started or finished");
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration, "Voting period has not started");
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), "Voting period has finished");
         require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "You are not eligible to vote or have already voted");
         Round storage round = rounds[roundNum];
         uint256 tokenSum;
