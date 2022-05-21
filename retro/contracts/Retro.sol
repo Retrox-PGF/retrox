@@ -114,7 +114,7 @@ contract Retro {
     }
 
     function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration && (block.timestamp - rounds[roundNum].startBlockTimestamp) <= rounds[roundNum].votingDuration, "Voting period not started or finished");
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration && ((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration] + rounds[roundNum].votingDuration)), "Voting period not started or finished");
         require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "You are not eligible to vote or have already voted");
         Round storage round = rounds[roundNum];
         uint256 tokenSum;

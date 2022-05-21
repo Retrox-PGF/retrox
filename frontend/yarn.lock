@@ -768,7 +768,7 @@
   "version" "1.0.1"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
-  "integrity" "sha1-m4sMxmPWaafY9vXQiToU00jzD78="
+  "integrity" "sha1-m4sMxmPWaafY9vXQiToU00jzD78= sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ=="
   "resolved" "https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz"
   "version" "1.1.2"
 
@@ -783,12 +783,12 @@
   "version" "2.0.4"
 
 "@protobufjs/eventemitter@^1.1.0":
-  "integrity" "sha1-NVy8mLr61ZePntCV85diHx0Ga3A="
+  "integrity" "sha1-NVy8mLr61ZePntCV85diHx0Ga3A= sha512-j9ednRT81vYJ9OfVuXG6ERSTdEL1xVsNgqpkxMsbIabzSo3goCjDIveeGv5d03om39ML71RdmrGNjG5SReBP/Q=="
   "resolved" "https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz"
   "version" "1.1.0"
 
 "@protobufjs/fetch@^1.1.0":
-  "integrity" "sha1-upn7WYYUr2VwDBYZ/wbUVLDYTEU="
+  "integrity" "sha1-upn7WYYUr2VwDBYZ/wbUVLDYTEU= sha512-lljVXpqXebpsijW71PZaCYeIcE5on1w5DlQy5WH6GLbFryLUrBD4932W/E2BSpfRJWseIL4v/KPgBFxDOIdKpQ=="
   "resolved" "https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz"
   "version" "1.1.0"
   dependencies:
@@ -796,27 +796,27 @@
     "@protobufjs/inquire" "^1.1.0"
 
 "@protobufjs/float@^1.0.2":
-  "integrity" "sha1-Xp4avctz/Ap8uLKR33jIy9l7h9E="
+  "integrity" "sha1-Xp4avctz/Ap8uLKR33jIy9l7h9E= sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ=="
   "resolved" "https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz"
   "version" "1.0.2"
 
 "@protobufjs/inquire@^1.1.0":
-  "integrity" "sha1-/yAOPnzyQp4tyvwRQIKOjMY48Ik="
+  "integrity" "sha1-/yAOPnzyQp4tyvwRQIKOjMY48Ik= sha512-kdSefcPdruJiFMVSbn801t4vFK7KB/5gd2fYvrxhuJYg8ILrmn9SKSX2tZdV6V+ksulWqS7aXjBcRXl3wHoD9Q=="
   "resolved" "https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz"
   "version" "1.1.0"
 
 "@protobufjs/path@^1.1.2":
-  "integrity" "sha1-bMKyDFya1q0NzP0hynZz2Nf79o0="
+  "integrity" "sha1-bMKyDFya1q0NzP0hynZz2Nf79o0= sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA=="
   "resolved" "https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz"
   "version" "1.1.2"
 
 "@protobufjs/pool@^1.1.0":
-  "integrity" "sha1-Cf0V8tbTq/qbZbw2ZQbWrXhG/1Q="
+  "integrity" "sha1-Cf0V8tbTq/qbZbw2ZQbWrXhG/1Q= sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw=="
   "resolved" "https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz"
   "version" "1.1.0"
 
 "@protobufjs/utf8@^1.1.0":
-  "integrity" "sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA="
+  "integrity" "sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA= sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw=="
   "resolved" "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz"
   "version" "1.1.0"
 
@@ -865,7 +865,7 @@
     "@types/node" "*"
 
 "@types/json5@^0.0.29":
-  "integrity" "sha1-7ihweulOEdK4J7y+UnC86n8+ce4="
+  "integrity" "sha1-7ihweulOEdK4J7y+UnC86n8+ce4= sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ=="
   "resolved" "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   "version" "0.0.29"
 
@@ -1181,7 +1181,7 @@
   "version" "3.1.2"
 
 "aes-js@3.0.0":
-  "integrity" "sha1-4h3xCtbCBTKVvLuNq0Cwnb6ofk0="
+  "integrity" "sha1-4h3xCtbCBTKVvLuNq0Cwnb6ofk0= sha512-H7wUZRn8WpTq9jocdxQ2c8x2sKo9ZVmzfRE13GiNJXfp7NcKYEdvl3vspKjXox6RIG2VtaRe4JFvxG4rqp2Zuw=="
   "resolved" "https://registry.npmjs.org/aes-js/-/aes-js-3.0.0.tgz"
   "version" "3.0.0"
 
@@ -1299,7 +1299,7 @@
     "es-shim-unscopables" "^1.0.0"
 
 "ast-types-flow@^0.0.7":
-  "integrity" "sha1-9wtzXGvKGlycItmCw+Oef+ujva0="
+  "integrity" "sha1-9wtzXGvKGlycItmCw+Oef+ujva0= sha512-eBvWn1lvIApYMhzQMsu9ciLfkBY499mFZlNqG+/9WR7PVlroQw0vG30cOQQbaKz3sCEc44TAOu2ykzqXSNnwag=="
   "resolved" "https://registry.npmjs.org/ast-types-flow/-/ast-types-flow-0.0.7.tgz"
   "version" "0.0.7"
 
@@ -1396,7 +1396,7 @@
   "version" "2.2.0"
 
 "bind-decorator@^1.0.11":
-  "integrity" "sha1-5BvAah9l3ZzsR2yRxdrzl4SIJS8="
+  "integrity" "sha1-5BvAah9l3ZzsR2yRxdrzl4SIJS8= sha512-yzkH0uog6Vv/vQ9+rhSKxecnqGUZHYncg7qS7voz3Q76+TAi1SGiOKk2mlOvusQnFz9Dc4BC/NMkeXu11YgjJg=="
   "resolved" "https://registry.npmjs.org/bind-decorator/-/bind-decorator-1.0.11.tgz"
   "version" "1.0.11"
 
@@ -1462,7 +1462,7 @@
     "unload" "2.2.0"
 
 "brorand@^1.1.0":
-  "integrity" "sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8="
+  "integrity" "sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8= sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w=="
   "resolved" "https://registry.npmjs.org/brorand/-/brorand-1.1.0.tgz"
   "version" "1.1.0"
 
@@ -1495,7 +1495,7 @@
     "picocolors" "^1.0.0"
 
 "bs58@^4.0.0":
-  "integrity" "sha1-vhYedsNU9veIrkBx9j806MTwpCo="
+  "integrity" "sha1-vhYedsNU9veIrkBx9j806MTwpCo= sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw=="
   "resolved" "https://registry.npmjs.org/bs58/-/bs58-4.0.1.tgz"
   "version" "4.0.1"
   dependencies:
@@ -1529,7 +1529,7 @@
     "buffer-fill" "^1.0.0"
 
 "buffer-fill@^1.0.0":
-  "integrity" "sha1-+PeLdniYiO858gXNY39o5wISKyw="
+  "integrity" "sha1-+PeLdniYiO858gXNY39o5wISKyw= sha512-T7zexNBwiiaCOGDg9xNX9PBmjrubblRkENuptryuI64URkXDFum9il/JGL8Lm8wYfAXpredVXXZz7eMHilimiQ=="
   "resolved" "https://registry.npmjs.org/buffer-fill/-/buffer-fill-1.0.0.tgz"
   "version" "1.0.0"
 
@@ -1539,7 +1539,7 @@
   "version" "1.1.2"
 
 "buffer-xor@^1.0.3":
-  "integrity" "sha1-JuYe0UIvtw3ULm42cp7VHYVf6Nk="
+  "integrity" "sha1-JuYe0UIvtw3ULm42cp7VHYVf6Nk= sha512-571s0T7nZWK6vB67HI5dyUF7wXiNcfaPPPTl6zYCNApANjIvYJTg7hlud/+cJpdAhS7dVzqMLmfhfHR3rAcOjQ=="
   "resolved" "https://registry.npmjs.org/buffer-xor/-/buffer-xor-1.0.3.tgz"
   "version" "1.0.3"
 
@@ -2302,7 +2302,8 @@
     "setimmediate" "^1.0.5"
 
 "ethereumjs-abi@git+https://github.com/ethereumjs/ethereumjs-abi.git":
-  "resolved" "git+ssh://git@github.com/ethereumjs/ethereumjs-abi.git#ee3994657fa7a427238e6ba92a84d0b529bbcde0"
+  "integrity" "sha512-qs8G5KwnIO/thOQjv1RvR/4oiTsy6IaCsN+ory5dbiqFXz8sd239aWJH0wmsVNPimL5X1KzQheUpi6xAo6FU4w=="
+  "resolved" "git+ssh://git@github.com/ethereumjs/ethereumjs-abi.git"
   "version" "0.6.8"
   dependencies:
     "bn.js" "^4.11.8"
