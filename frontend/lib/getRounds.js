@@ -2,42 +2,55 @@ import { ethers } from "ethers"
 import { deployed_address } from '../contract_config.js';
 import fetch from 'node-fetch'
 
+const IPFS_REGEX = /ipfs:[/]{2}[0-9a-zA-Z]{46}/g
 
 //function to convert uri from contract to URL which can be called to get JSON metadata
-function uriToURL(uri){
-    return `https://ipfs.infura.io/ipfs/${uri.slice(7)}`
+function uriToURL(uri) {
+  return `https://ipfs.infura.io/ipfs/${uri.slice(7)}`
 }
 
 
 export async function getRounds() {
-    const provider = new ethers.providers.JsonRpcProvider(process.env.INFURA_URL);
+  const provider = new ethers.providers.JsonRpcProvider(process.env.INFURA_URL);
 
-    const retroAddress = deployed_address
-    const retroABI = [
-      "function getNextRoundNum() public view returns (uint256)",
-      "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
-    ]
-    const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
+  const retroAddress = deployed_address
+  const retroABI = [
+    "function getNextRoundNum() public view returns (uint256)",
+    "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
+  ]
+  const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
 
-    const numRounds = (await retroContract.getNextRoundNum()).toNumber();
+  const numRounds = (await retroContract.getNextRoundNum()).toNumber();
 
-    let rounds = []
-    for (let i = 0; i <= numRounds; i++) {
-        const round = await retroContract.getRoundData(i);
+  let rounds = []
+  for (let i = 0; i <= numRounds; i++) {
+    const round = await retroContract.getRoundData(i);
 
-        const ipfsHTTPS = uriToURL(round[0]);
-        const ipfsresponse = await fetch(ipfsHTTPS);
-        const metadata = await ipfsresponse.json()
-
-        rounds.push({
-            roundURI: round[0],
-            roundName: metadata,
-            startBlockTimestamp: round[1].toNumber(),
-            fundsCommitted: ethers.utils.formatEther(round[2]),
-            nominationCounter: round[3].toNumber(),
-            totalVotes: round[4].toNumber(),
-        })
+    // check that ipfs URI is formatted properly
+    const match = round[0].match(IPFS_REGEX);
+    if (!match) {
+      continue;
     }
 
-    return rounds;
+    const url = uriToURL(round[0]);
+    const res = await fetch(url);
+
+    let body;
+    try {
+      body = await res.json()
+    } catch (error) {
+      console.error(error)
+    }
+
+    rounds.push({
+      roundURI: round[0],
+      ...body,
+      startBlockTimestamp: round[1].toNumber(),
+      fundsCommitted: ethers.utils.formatEther(round[2]),
+      nominationCounter: round[3].toNumber(),
+      totalVotes: round[4].toNumber(),
+    })
+  }
+
+  return rounds;
 }
