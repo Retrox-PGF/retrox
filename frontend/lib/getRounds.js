@@ -1,6 +1,5 @@
 import { ethers } from "ethers"
 import { deployed_address } from '../contract_config.js';
-import fetch from 'node-fetch'
 
 const IPFS_REGEX = /ipfs:[/]{2}[0-9a-zA-Z]{46}/g
 
