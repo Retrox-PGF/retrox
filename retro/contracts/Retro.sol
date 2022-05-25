@@ -71,13 +71,13 @@ contract Retro {
         uint256 numVotes;
     }
 
-    mapping (uint256 => Round) private rounds; 
-    mapping (uint256 => mapping (uint256 => Nomination)) private nominations;
-    mapping(uint256 => mapping (address => uint256)) private badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
-    mapping(uint256  => uint256) private amounts;
-    mapping(uint256 => uint256) private flowRates;
+    mapping (uint256 => Round) public rounds; 
+    mapping (uint256 => mapping (uint256 => Nomination)) public nominations;
+    mapping(uint256 => mapping (address => uint256)) public badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
+    mapping(uint256  => uint256) public amounts;
+    mapping(uint256 => uint256) public flowRates;
 
-    uint256 private roundCounter;
+    uint256 public roundCounter;
 
     event RetroSetup(address indexed initiator);
     event NewRound(string roundURI, uint256 startBlockTimestamp, uint256 fundsCommitted);
