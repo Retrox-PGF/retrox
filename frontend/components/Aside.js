@@ -33,7 +33,7 @@ export default function Aside() {
       <a
         className="inline-flex items-center justify-center h-20 w-20 bg-[#050346] text-white"
       >
-        Retr0x
+        Retrox
       </a>
       </Link>
       <div className="flex-grow flex flex-col justify-between text-gray-500 bg-gray-800">

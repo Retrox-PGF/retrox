@@ -1,4 +1,6 @@
 const BadgeholderModal = (props) => {
+  console.log("badgeholder list")
+  console.log(props.badgeholderList);
   return (
     <>
       <div
@@ -10,7 +12,7 @@ const BadgeholderModal = (props) => {
               <h2 className="font-bold text-3xl my-4 text-blue-600">Badgeholders</h2>
               <div className="grid grid-rows-4 grid-cols-3">
               {Object.keys(props.badgeholderList).map((key, value) => (
-                (key < Object.keys(props.badgeholderList).length - 4 && <a href={'https://twitter.com/' + props.badgeholderList[key].slice(1)} target="_blank" rel="noreferrer" className="m-1 text-blue-500 hover:text-blue-700">{props.badgeholderList[key]}</a>)
+                (key < Object.keys(props.badgeholderList).length&& <a href={'https://twitter.com/' + props.badgeholderList[key].slice(1)} target="_blank" rel="noreferrer" className="m-1 text-blue-500 hover:text-blue-700">{props.badgeholderList[key]}</a>)
               ))}
               </div>
             </div>

@@ -24,6 +24,7 @@ console.log(rounds)
     </SiteHead>
     <Layout>
         <RoundsMain
+          rounds={rounds}
           cardClick={cardClick}>
         </RoundsMain>
     </Layout>

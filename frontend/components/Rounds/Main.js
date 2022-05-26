@@ -15,7 +15,7 @@ export default function RoundsMain(props) {
       </HeaderGrid>
 
       <section className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {RoundsCard(props.cardClick)}
+        {RoundsCard(props)}
       </section>
 
       <Footer></Footer>

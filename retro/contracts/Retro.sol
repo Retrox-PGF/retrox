@@ -76,6 +76,8 @@ contract Retro {
     mapping(uint256 => mapping (address => uint256)) public badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
     mapping(uint256  => uint256) public amounts;
     mapping(uint256 => uint256) public flowRates;
+    mapping(address => mapping(uint256 => mapping(uint256 => uint256))) private badgeHolderVotes;
+    mapping(address => mapping(uint256 => uint256)) private badgeHolderTokenAmounts;
 
     uint256 public roundCounter;
 
@@ -86,8 +88,8 @@ contract Retro {
     event Disperse(address indexed recipient, uint256 amount);
 
     function createRound(string memory roundURI, address[] memory badgeHolders, uint256 nominationDuration, uint256 votingDuration) public payable {
-        require(nominationDuration > 0, "Nomination period must be greater than zero");
-        require(votingDuration > 0, "Voting period must be greater than zero");
+        //require(nominationDuration > 0, "Nomination period must be greater than zero");
+        //require(votingDuration > 0, "Voting period must be greater than zero");
         require(msg.value >= minRoundCreationThreshold, "Insufficient funds to create a new round");
         rounds[roundCounter].roundURI = roundURI;
         rounds[roundCounter].badgeHolders = badgeHolders;
@@ -106,7 +108,7 @@ contract Retro {
 
     function nominate(uint256 roundNum, string memory nominationURI, address recipient) public payable {
         require(msg.value >= minNominationThreshold, "Insufficient funds to nominate");
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= rounds[roundNum].nominationDuration, "Nomination period finished");
+        //require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= rounds[roundNum].nominationDuration, "Nomination period finished");
         Round storage round = rounds[roundNum];
         nominations[roundNum][round.nominationCounter].nominationURI = nominationURI;
         nominations[roundNum][round.nominationCounter].recipient = recipient;
@@ -115,23 +117,49 @@ contract Retro {
         emit NewNomination(roundNum, nominationURI, recipient);
     }
 
-    function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration, "Voting period has not started");
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), "Voting period has finished");
-        require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "You are not eligible to vote or have already voted");
+    // function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
+    //     //require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration, "Voting period has not started");
+    //     //require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), "Voting period has finished");
+    //     require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "You are not eligible to vote");
+    //     Round storage round = rounds[roundNum];
+    //     uint256 tokenSum;
+    //     //uint256 votePowerSum;
+    //     for (uint256 i = 0; i < round.nominationCounter; i++) {
+    //         Nomination storage nomination = nominations[roundNum][i];
+    //         uint256 votePower = sqrt(tokenAllocations[i]); // QV vote 
+    //         if(nomination.badgeHolderVotes[msg.sender] > 0) {
+    //             nomination.numVotes -= nomination.badgeHolderVotes[msg.sender];
+    //             round.totalVotes -= nomination.badgeHolderVotes[msg.sender];
+    //         }
+    //         nomination.badgeHolderVotes[msg.sender] = votePower;
+    //         round.totalVotes += votePower;
+    //         nomination.numVotes += votePower;
+    //         // votePowerSum += votePower;
+    //         tokenSum += tokenAllocations[i];
+    //     }
+    //     require(tokenSum <= tokensPerBadgeHolder, "Incorrect total number of tokens: too many tokens compared to allowance");
+    //     // round.totalVotes += votePowerSum;
+    //     // badgeHolderVoteStatus[roundNum][msg.sender] = 2;
+    //     emit NewVote(roundNum, msg.sender);
+    // }
+
+    function castVote(uint256 roundNum, uint256 nominationNum, uint256 tokenAllocation) public {
+        //require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration, "Voting period has not started");
+        //require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), "Voting period has finished");
+        require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "Not eligible to vote");
         Round storage round = rounds[roundNum];
-        uint256 tokenSum;
-        uint256 votePowerSum;
-        for (uint256 i = 0; i <= round.nominationCounter; i++) {
-            Nomination storage nomination = nominations[roundNum][i];
-            uint256 votePower = sqrt(tokenAllocations[i]); // QV vote 
-            nomination.numVotes += votePower;
-            votePowerSum += votePower;
-            tokenSum += tokenAllocations[i];
+        Nomination storage nomination = nominations[roundNum][nominationNum];
+        uint256 votePower = sqrt(tokenAllocation); // QV vote 
+        if(badgeHolderVotes[msg.sender][roundNum][nominationNum] > 0) {
+            nomination.numVotes -= sqrt(badgeHolderVotes[msg.sender][roundNum][nominationNum]);
+            round.totalVotes -= sqrt(badgeHolderVotes[msg.sender][roundNum][nominationNum]);
+            badgeHolderTokenAmounts[msg.sender][roundNum] -= badgeHolderVotes[msg.sender][roundNum][nominationNum];
         }
-        require(tokenSum == tokensPerBadgeHolder, "Incorrect total number of tokens");
-        round.totalVotes += votePowerSum;
-        badgeHolderVoteStatus[roundNum][msg.sender] = 2;
+        badgeHolderVotes[msg.sender][roundNum][nominationNum] = tokenAllocation;
+        round.totalVotes += votePower;
+        nomination.numVotes += votePower;
+        badgeHolderTokenAmounts[msg.sender][roundNum] += tokenAllocation;
+        require(badgeHolderTokenAmounts[msg.sender][roundNum] <= tokensPerBadgeHolder, "Incorrect total number of tokens: too many tokens compared to allowance");
         emit NewVote(roundNum, msg.sender);
     }
 
@@ -141,7 +169,7 @@ contract Retro {
     }
 
     function disperseFunds(uint roundNum) public {
-        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), 'Only disperse funds after round is completed');
+        require((block.timestamp - rounds[roundNum].startBlockTimestamp) > (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), 'Only disperse the funds after round is completed');
         uint totalNumVotes = rounds[roundNum].totalVotes;
         for(uint i=0; i < rounds[roundNum].nominationCounter; i++){
             uint256 amount = (nominations[roundNum][i].numVotes * rounds[roundNum].fundsCommitted)/totalNumVotes;
@@ -156,7 +184,6 @@ contract Retro {
             }
         }
     }
-
 
     /// @notice Calculates the square root of x, rounding down.
     /// @dev Uses the Babylonian method https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method.
@@ -234,5 +261,9 @@ contract Retro {
 
     function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256) {    
         return badgeHolderVoteStatus[roundNum][badgeHolder];
+    }
+
+    function getBadgeHolderVotes(uint256 roundNum, uint256 nominationNum, address badgeHolder) public view returns (uint256) {
+        return sqrt(badgeHolderVotes[badgeHolder][roundNum][nominationNum]);
     }
 }
