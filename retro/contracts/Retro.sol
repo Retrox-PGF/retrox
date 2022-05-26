@@ -117,32 +117,6 @@ contract Retro {
         emit NewNomination(roundNum, nominationURI, recipient);
     }
 
-    // function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public {
-    //     //require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration, "Voting period has not started");
-    //     //require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), "Voting period has finished");
-    //     require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "You are not eligible to vote");
-    //     Round storage round = rounds[roundNum];
-    //     uint256 tokenSum;
-    //     //uint256 votePowerSum;
-    //     for (uint256 i = 0; i < round.nominationCounter; i++) {
-    //         Nomination storage nomination = nominations[roundNum][i];
-    //         uint256 votePower = sqrt(tokenAllocations[i]); // QV vote 
-    //         if(nomination.badgeHolderVotes[msg.sender] > 0) {
-    //             nomination.numVotes -= nomination.badgeHolderVotes[msg.sender];
-    //             round.totalVotes -= nomination.badgeHolderVotes[msg.sender];
-    //         }
-    //         nomination.badgeHolderVotes[msg.sender] = votePower;
-    //         round.totalVotes += votePower;
-    //         nomination.numVotes += votePower;
-    //         // votePowerSum += votePower;
-    //         tokenSum += tokenAllocations[i];
-    //     }
-    //     require(tokenSum <= tokensPerBadgeHolder, "Incorrect total number of tokens: too many tokens compared to allowance");
-    //     // round.totalVotes += votePowerSum;
-    //     // badgeHolderVoteStatus[roundNum][msg.sender] = 2;
-    //     emit NewVote(roundNum, msg.sender);
-    // }
-
     function castVote(uint256 roundNum, uint256 nominationNum, uint256 tokenAllocation) public {
         //require((block.timestamp - rounds[roundNum].startBlockTimestamp) > rounds[roundNum].nominationDuration, "Voting period has not started");
         //require((block.timestamp - rounds[roundNum].startBlockTimestamp) <= (rounds[roundNum].nominationDuration + rounds[roundNum].votingDuration), "Voting period has finished");
