@@ -5,9 +5,10 @@ import RoundsMain from '../components/Rounds/Main';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
+import { getRounds } from "../lib/getRounds"
 
 export default function Rounds({ rounds }) {
-
+console.log(rounds)
   //Round Card Click
   const router = useRouter()
   function cardClick(id) {
@@ -18,7 +19,7 @@ export default function Rounds({ rounds }) {
   return (
     <>
     <SiteHead
-      title="Retr0x"
+      title="Retrox"
       description="Retro-generative public goods funding">
     </SiteHead>
     <Layout>
@@ -31,12 +32,12 @@ export default function Rounds({ rounds }) {
 }
 
 
-// import { getRounds } from "../lib/getRounds"
-//
-// export async function getServerSideProps(context) {
-//   return {
-//     props: {
-//       rounds: await getRounds()
-//     }
-//   }
-// }
+ 
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      rounds: await getRounds()
+    }
+  }
+}
