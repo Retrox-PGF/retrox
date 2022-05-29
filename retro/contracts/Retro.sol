@@ -54,6 +54,12 @@ contract Retro {
         Cancelled
     }
 
+    enum VotingType {
+        QuadraticFunding,
+        Binary,
+        OneVote
+    }
+
     struct Round {
         string roundURI;
         address[] badgeHolders;
@@ -63,6 +69,9 @@ contract Retro {
         uint256 totalVotes;
         uint256 nominationDuration;
         uint256 votingDuration;
+        uint256 stakingAmount;
+        bool noFundingRound;
+        VotingType votingType;
     }
 
     struct Nomination {
@@ -87,7 +96,7 @@ contract Retro {
     event NewVote(uint256 roundNum, address badgeHolder);
     event Disperse(address indexed recipient, uint256 amount);
 
-    function createRound(string memory roundURI, address[] memory badgeHolders, uint256 nominationDuration, uint256 votingDuration) public payable {
+    function createRound(string memory roundURI, address[] memory badgeHolders, uint256 nominationDuration, uint256 votingDuration, uint256 stakingAmount, bool noFundingRound, VotingType votingType) public payable {
         //require(nominationDuration > 0, "Nomination period must be greater than zero");
         //require(votingDuration > 0, "Voting period must be greater than zero");
         require(msg.value >= minRoundCreationThreshold, "Insufficient funds to create a new round");
@@ -97,6 +106,9 @@ contract Retro {
         rounds[roundCounter].fundsCommitted = msg.value;
         rounds[roundCounter].nominationDuration = nominationDuration;
         rounds[roundCounter].votingDuration = votingDuration;
+        rounds[roundCounter].stakingAmount = stakingAmount;
+        rounds[roundCounter].noFundingRound = noFundingRound;
+        rounds[roundCounter].votingType = votingType;
 
         for (uint256 i = 0; i < badgeHolders.length; i++) {
             badgeHolderVoteStatus[roundCounter][badgeHolders[i]] = 1;

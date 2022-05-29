@@ -24,7 +24,7 @@ export default function NewRound() {
   //Submit form
   async function formSubmit(event) {
     event.preventDefault();
-    const {roundName, funding, nominationDuration, votingDuration, description, badgeholders} = event.target.elements;
+    const {roundName, funding, nominationDuration, votingDuration, stakingAmount, noFundingRound, votingType, description, badgeholders} = event.target.elements;
     let lines = badgeholders.value.split("\n")
     const splitLines = [];
     const addressArray = [];
@@ -46,7 +46,7 @@ export default function NewRound() {
     })
     console.log(metadata)
     // create transaction with value locked
-    await contractInitRound(ipfsURI, addressArray, nominationDuration.value * 86400, votingDuration.value * 86400, funding.value)
+    await contractInitRound(ipfsURI, addressArray, nominationDuration.value * 86400, votingDuration.value * 86400, funding.value, stakingAmount, noFundingRound, votingType)
   }
   //END
 

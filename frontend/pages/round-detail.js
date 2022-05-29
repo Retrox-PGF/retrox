@@ -110,7 +110,7 @@ export default function Nominations({ input }) {
     }
     console.log("voting state", votingState);
     // return votingState;
-    return 2;
+    return 1;
   }
 
   async function castVote() {
@@ -143,36 +143,6 @@ export default function Nominations({ input }) {
     console.log(badgeHolderMapping);
     return badgeHolderMapping; 
   }
-
-  // async function getBadgeHolderVotes(nomID, badgeholder) {
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const retroAddress = deployed_address;
-  //   const retroABI = [
-  //     "function getBadgeHolderVotes(uint256 roundNum, uint256 nominationNum, address badgeHolder) public view returns (uint256)"
-  //   ]
-  //   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-  //   console.log("roundId", roundID);
-  //   console.log("nomID", nomID),
-  //   console.log("badegholder", badgeholder);
-  //   let vote = await retroContract.getBadgeHolderVotes(roundID, nomID, badgeholder);
-  //   return vote;
-  // }
-
-  // function getVoteData() {
-  //   const voteData = {nominationVotes: {}, totalVotes:round.totalVotes, fundingPool: round.fundsCommitted, badgeHolderVotes: {}}
-  //   const badgeHolderList = getBadgeHolderList();
-  //   const badgeHolderMapping = getBadgeHolderMapping();
-  //   input.nominations.forEach((nomination, nominationIndex) => {
-  //     voteData.nominationVotes[nomination.projectName] = nomination.numVotes;
-  //     voteData.badgeHolderVotes[nomination.projectName] = {};
-  //     for (const [key, badgeholder] of Object.entries(badgeHolderList)) {
-  //       (async () => await getBadgeHolderVotes(nominationIndex, badgeHolderMapping[badgeholder]).then(function(result) {
-  //         voteData.badgeHolderVotes[nomination.projectName][badgeholder] = result.toNumber();
-  //       }))();
-  //     }
-  //   })
-  //   return voteData
-  // }
 
   function getVoteData() {
     const voteData = {nominationVotes: {}, totalVotes:round.totalVotes, fundingPool: round.fundsCommitted, badgeHolderVotes: {}}

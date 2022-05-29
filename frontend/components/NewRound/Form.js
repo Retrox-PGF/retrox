@@ -10,16 +10,32 @@ export default function Form(props) {
                 <input type="text" placeholder="AI safety" name="roundName" className="border rounded-xl p-2" required></input>
               </div>
               <div className="flex flex-col">
-                <label className="text-lg ml-1 mb-2">Initial funding amount (in eth)</label>
+                <label className="text-lg ml-1 mb-2">Funding Amount (in ETH)</label>
                 <input type="number" placeholder="0.1" name="funding" step="0.001" className="border rounded-xl p-2" required></input>
               </div>
               <div className="flex flex-col">
-                <label className="text-lg ml-1 mb-2">Duration of nominations (in days)</label>
+                <label className="text-lg ml-1 mb-2">Nomination Duration (in days)</label>
                 <input type="number" placeholder="21" name="nominationDuration" step="1" className="border rounded-xl p-2" required></input>
               </div>
               <div className="flex flex-col">
-                <label className="text-lg ml-1 mb-2">Duration of voting (in days)</label>
+                <label className="text-lg ml-1 mb-2">Voting Duration (in days)</label>
                 <input type="number" placeholder="7" name="votingDuration" step="1" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Staking Amount</label>
+                <input type="number" placeholder="0.001" name="stakingAmount" step="0.001" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">No funding round</label>
+                <input type="checkbox" placeholder="0.001" name="noFundingRound" step="0.001" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Voting Type</label>
+                <select name="votingType">
+                  <option value="QF">Quadratic Funding</option>
+                  <option value="QF">Binary (Yes/No) Voting</option>
+                  <option value="QF">One-person, one-vote</option>
+                </select>
               </div>
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Short description</label>
