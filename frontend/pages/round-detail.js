@@ -7,6 +7,7 @@ const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1
 import SiteHead from '../components/SiteHead';
 import Layout from '../components/Layout';
 import RoundDetailMain from '../components/RoundDetail/Main';
+import RoundDetailMainSkeleton from '../components/Skeleton/RoundDetail/MainSkeleton';
 import ChartModal from '../components/RoundDetail/Modals/ChartModal';
 import FundingModal from '../components/RoundDetail/Modals/FundingModal';
 import BadgeholderModal from '../components/RoundDetail/Modals/BadgeholderModal';
@@ -15,9 +16,8 @@ import { rounds } from '../data/rounds';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-import { useAccount } from 'wagmi';
+import { useAccount, useProvider } from 'wagmi';
 import { getRounds } from "../lib/getRounds"
-
 import { deployed_address } from '../contract_config.js';
 
 export default function Nominations({ input }) {
@@ -27,18 +27,18 @@ export default function Nominations({ input }) {
   const [showFundingModal, setShowFundingModal] = useState(false)
   //END
 
-  const [address, setAddress] = useState(false)
+  const [address, setAddress] = useState(false);
+  const provider = useProvider();
   const { data: account } = useAccount();
   useEffect(() => {
     if (!account) return;
-    setAddress(account.address)
+    setAddress(account.address);
   }, [account])
 
   //Get round
   const router = useRouter()
   const roundID = router.query.id;
   //const round = rounds.find(o => o.id == roundID);
-  console.log(input.rounds);
   const round = input.rounds[roundID];
   //END
   console.log("nominations");
@@ -53,13 +53,11 @@ export default function Nominations({ input }) {
 
   //Badgeholder logic, status is as follows; {0 = inelligible (not whitelisted), 1 = eligible, 2 = voted}
   async function contractInitBadgeholder(badgeAddress){
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
     const retroAddress = deployed_address;
     const retroABI = [
       "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
     ]
-    console.log(`address: ${retroAddress}`)
-    console.log(`provider: ${JSON.stringify(await provider.getCode(retroAddress))}`)
+    console.log(await provider.getCode(retroAddress))
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
     return await retroContract.getBadgeHolderStatus(roundID, badgeAddress);
   }
@@ -141,7 +139,7 @@ export default function Nominations({ input }) {
     var badgeHolderMapping = {}
     round.badgeholders.forEach((badgeHolder) => {badgeHolderMapping[badgeHolder.twitter] = badgeHolder.address});
     console.log(badgeHolderMapping);
-    return badgeHolderMapping; 
+    return badgeHolderMapping;
   }
 
   // async function getBadgeHolderVotes(nomID, badgeholder) {
@@ -242,6 +240,7 @@ export default function Nominations({ input }) {
       description="Retro-generative public goods funding">
     </SiteHead>
     <Layout>
+      {false ?
         <RoundDetailMain
           roundID={roundID}
           roundName={roundID && round.roundName}
@@ -262,6 +261,10 @@ export default function Nominations({ input }) {
           badgeholderList = {getBadgeHolderList()}
           castVote={() => castVote}>
         </RoundDetailMain>
+        :
+        <RoundDetailMainSkeleton>
+        </RoundDetailMainSkeleton>
+      }
     </Layout>
     {showChartModal &&
       <ChartModal

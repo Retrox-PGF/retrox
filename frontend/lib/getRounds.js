@@ -12,7 +12,7 @@ function uriToURL(uri) {
 export async function getRounds() {
   const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_INFURA_URL);
 
-  const retroAddress = deployed_address
+  const retroAddress = deployed_address;
   const retroABI = [
     "function getNextRoundNum() public view returns (uint256)",
     "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256, uint256, uint256)"
