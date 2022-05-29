@@ -14,7 +14,7 @@ import BadgeholderModal from '../components/RoundDetail/Modals/BadgeholderModal'
 
 import { rounds } from '../data/rounds';
 import { useRouter } from 'next/router';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { ethers } from 'ethers';
 import { useAccount, useProvider } from 'wagmi';
 import { getRounds } from "../lib/getRounds"
@@ -29,6 +29,9 @@ export default function Nominations({ input }) {
 
   const [address, setAddress] = useState(false);
   const provider = useProvider();
+  const { rounds } = useContext(RoundContext);
+  console.log(`rounds: ${JSON.stringify(rounds, null, 2)}`)
+
   const { data: account } = useAccount();
   useEffect(() => {
     if (!account) return;
@@ -288,6 +291,7 @@ export default function Nominations({ input }) {
 
 import { getNominations } from "../lib/getNominations";
 import { getBadgeHolderVotes } from '../lib/getBadgeHolderVotes';
+import { RoundContext } from '../lib/RoundContext';
 
 export async function getServerSideProps({ query }) {
   return {
