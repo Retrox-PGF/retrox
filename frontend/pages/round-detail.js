@@ -16,10 +16,11 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from 'wagmi';
+import { getRounds } from "../lib/getRounds"
 
 import { deployed_address } from '../contract_config.js';
 
-export default function Nominations({ nominations }) {
+export default function Nominations({ input }) {
   //Modal
   const [showChartModal, setShowChartModal] = useState(false)
   const [showBadgeholderModal, setShowBadgeholderModal] = useState(false)
@@ -36,11 +37,15 @@ export default function Nominations({ nominations }) {
   //Get round
   const router = useRouter()
   const roundID = router.query.id;
-  const round = rounds.find(o => o.id == roundID);
+  //const round = rounds.find(o => o.id == roundID);
+  console.log(input.rounds);
+  const round = input.rounds[roundID];
   //END
+  console.log("nominations");
+  console.log(input.nominations);
 
   //Click on nomination
-  const [nomination, setNomination] = useState(1);
+  const [nomination, setNomination] = useState(0);
   function selectNomination(id) {
     setNomination(id);
   }
@@ -62,11 +67,11 @@ export default function Nominations({ nominations }) {
 
   //Voting logic
   const [votesRemaining, setVotesRemaining] = useState(0);
-  const [ballot, setBallot] = useState(Array(nominations.nominationData.length).fill(0));
+  const [ballot, setBallot] = useState(Array(input.nominations.length).fill(0));
   const [canVote, setCanVote] = useState(false);
   const [votingState, setVotingState] = useState(0);
   const [votedOnObject, setVotedOnObject] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   function updateVote(index, plus) {
     const modBallot = ballot;
@@ -86,6 +91,7 @@ export default function Nominations({ nominations }) {
 
   async function checkCanVote(address) {
     const result = await contractInitBadgeholder(address);
+    console.log("voting status", result)
     return result == 1;
   }
 
@@ -94,18 +100,89 @@ export default function Nominations({ nominations }) {
     // get current time
     // substract time from endtime to check whether voting is closed
     // convert time into votingState
-    return nominations.votingState;
+    var votingState = 0;
+    if((Date.now()/1000) - round.startBlockTimestamp <= round.nominationDuration) {
+      votingState = 0; // nominations in progress
+    } else if ((Date.now()/1000)-round.startBlockTimestamp <= (round.nominationDuration + round.votingDuration)){
+      votingState = 1; // voting in progress
+    } else if ((Date.now()/1000) - round.startBlockTimestamp > (round.nominationDuration + round.votingDuration)) {
+      votingState = 2; // voting finished
+    }
+    console.log("voting state", votingState);
+    // return votingState;
+    return 2;
   }
 
   async function castVote() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
     const retroAddress = deployed_address;
     const retroABI = [
-      "function castVote(uint256 roundNum, uint256[] memory tokenAllocations) public"
+      "function castVote(uint256 roundNum, uint256 nominationNum, uint256 tokenAllocation) public"
     ]
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-    await retroContract.castVote(roundID, ballot);
+    console.log("ballot");
+    console.log(ballot);
+    const squaredBallot = ballot.map(vote => vote**2);
+    console.log("squared ballot");
+    const vote = squaredBallot[nomination];
+    await retroContract.connect(signer).castVote(roundID, nomination, vote);
     setIsSubmitted(true);
+  }
+
+  function getBadgeHolderList() {
+    var badgeHolderList = {}
+    round.badgeholders.forEach((badgeholder, index) => {badgeHolderList[index] = badgeholder.twitter});
+    console.log(badgeHolderList);
+    return badgeHolderList;
+  }
+
+  function getBadgeHolderMapping() {
+    var badgeHolderMapping = {}
+    round.badgeholders.forEach((badgeHolder) => {badgeHolderMapping[badgeHolder.twitter] = badgeHolder.address});
+    console.log(badgeHolderMapping);
+    return badgeHolderMapping; 
+  }
+
+  // async function getBadgeHolderVotes(nomID, badgeholder) {
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   const retroAddress = deployed_address;
+  //   const retroABI = [
+  //     "function getBadgeHolderVotes(uint256 roundNum, uint256 nominationNum, address badgeHolder) public view returns (uint256)"
+  //   ]
+  //   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
+  //   console.log("roundId", roundID);
+  //   console.log("nomID", nomID),
+  //   console.log("badegholder", badgeholder);
+  //   let vote = await retroContract.getBadgeHolderVotes(roundID, nomID, badgeholder);
+  //   return vote;
+  // }
+
+  // function getVoteData() {
+  //   const voteData = {nominationVotes: {}, totalVotes:round.totalVotes, fundingPool: round.fundsCommitted, badgeHolderVotes: {}}
+  //   const badgeHolderList = getBadgeHolderList();
+  //   const badgeHolderMapping = getBadgeHolderMapping();
+  //   input.nominations.forEach((nomination, nominationIndex) => {
+  //     voteData.nominationVotes[nomination.projectName] = nomination.numVotes;
+  //     voteData.badgeHolderVotes[nomination.projectName] = {};
+  //     for (const [key, badgeholder] of Object.entries(badgeHolderList)) {
+  //       (async () => await getBadgeHolderVotes(nominationIndex, badgeHolderMapping[badgeholder]).then(function(result) {
+  //         voteData.badgeHolderVotes[nomination.projectName][badgeholder] = result.toNumber();
+  //       }))();
+  //     }
+  //   })
+  //   return voteData
+  // }
+
+  function getVoteData() {
+    const voteData = {nominationVotes: {}, totalVotes:round.totalVotes, fundingPool: round.fundsCommitted, badgeHolderVotes: {}}
+    const badgeHolderList = getBadgeHolderList();
+    const badgeHolderMapping = getBadgeHolderMapping();
+    voteData.badgeHolderVotes = input.badgeHolderVotes;
+    input.nominations.forEach((nomination, nominationIndex) => {
+      voteData.nominationVotes[nomination.projectName] = nomination.numVotes;
+    })
+    return voteData
   }
 
   function getVotes(ballot) {
@@ -156,6 +233,8 @@ export default function Nominations({ nominations }) {
   }, [handleKeyPress]);
   //END
 
+  console.log("nomination, ", input.nominations);
+
   return (
     <>
     <SiteHead
@@ -165,12 +244,12 @@ export default function Nominations({ nominations }) {
     <Layout>
         <RoundDetailMain
           roundID={roundID}
-          roundName={roundID && round.name}
+          roundName={roundID && round.roundName}
           round={roundID && round}
           selectNomination={selectNomination}
-          nomination={nominations.nominationData.find(o => o.id == nomination)}
-          nominationData={nominations.nominationData}
-          voteData={nominations.voteData}
+          nomination={input.nominations[nomination]}
+          nominationData={input.nominations}
+          voteData={getVoteData()}
           canVote={canVote}
           votingState={votingState}
           updateVote={updateVote}
@@ -180,21 +259,23 @@ export default function Nominations({ nominations }) {
           isSubmitted={isSubmitted}
           showBadgeholderModal={() => setShowBadgeholderModal(true)}
           showFundingModal={() => setShowFundingModal(true)}
+          badgeholderList = {getBadgeHolderList()}
           castVote={() => castVote}>
         </RoundDetailMain>
     </Layout>
     {showChartModal &&
       <ChartModal
         close={() => setShowChartModal(false)}
-        voteData={nominations.voteData}>
+        voteData={getVoteData()}>
       </ChartModal>}
     {showBadgeholderModal &&
       <BadgeholderModal
         close={() => setShowBadgeholderModal(false)}
-        badgeholderList={nominations.voteData['Badgeholder']}>
+        badgeholderList={getBadgeHolderList()}>
       </BadgeholderModal>}
     {showFundingModal &&
       <FundingModal
+        round = {round}
         close={() => setShowFundingModal(false)}>
       </FundingModal>}
     </>
@@ -203,14 +284,15 @@ export default function Nominations({ nominations }) {
 
 
 import { getNominations } from "../lib/getNominations";
+import { getBadgeHolderVotes } from '../lib/getBadgeHolderVotes';
 
 export async function getServerSideProps({ query }) {
   return {
     props: {
-      nominations: {
-        nominationData: query.id == 1 ? nominationsData : fakeNominationsData,
-        voteData: query.id == 1 ? optimismVoteData : fakeVoteData,
-        votingState: query.id == 1 ? 2 : 1
+      input: {
+        nominations: await getNominations(query.id),
+        rounds: await getRounds(),
+        badgeHolderVotes: await getBadgeHolderVotes(query.id)
       }
     }
   }

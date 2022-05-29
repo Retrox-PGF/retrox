@@ -7,15 +7,23 @@ export default function Form(props) {
             <div className="grid grid-rows-2 grid-flow-col gap-4">
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Round name</label>
-                <input type="text" placeholder="Retro" name="roundName" className="border rounded-xl p-2" required></input>
-              </div>
-              <div className="flex flex-col">
-                <label className="text-lg ml-1 mb-2">Short description</label>
-                <input type="text" placeholder="Retro" name="description" className="border rounded-xl p-2" required maxLength="400"></input>
+                <input type="text" placeholder="AI safety" name="roundName" className="border rounded-xl p-2" required></input>
               </div>
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Initial funding amount (in eth)</label>
-                <input type="number" placeholder="Retro" name="funding" step="0.001" className="border rounded-xl p-2" required></input>
+                <input type="number" placeholder="0.1" name="funding" step="0.001" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Duration of nominations (in days)</label>
+                <input type="number" placeholder="21" name="nominationDuration" step="1" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Duration of voting (in days)</label>
+                <input type="number" placeholder="7" name="votingDuration" step="1" className="border rounded-xl p-2" required></input>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-lg ml-1 mb-2">Short description</label>
+                <input type="text" placeholder="Funding research in AI safety" name="description" className="border rounded-xl p-2" required maxLength="400"></input>
               </div>
               <div className="flex flex-col">
                 <label className="text-lg ml-1 mb-2">Badgeholders (entries on a seperate line)</label>

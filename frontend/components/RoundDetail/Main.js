@@ -27,6 +27,7 @@ export default function RoundDetailMain(props) {
         showBadgeholderModal={props.showBadgeholderModal}
         voteData={props.voteData}
         showFundingModal={props.showFundingModal}
+        badgeholderList = {props.badgeholderList}
         round={props.round}>
       </ButtonGrid>
 

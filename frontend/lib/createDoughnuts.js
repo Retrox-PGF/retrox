@@ -20,7 +20,8 @@ const hoverBackgroundColor = ["#0700CF80", "#1900CF80", "#2A00CE80", "#3C00CE80"
                           "#000BA280", "#0020A780", "#0036AC80", "#004EB180",
                           "#0066B680", "#0080BA80", "#0098BF80"]
 
-export function createDoughnutData(project, legend) {
+export function createDoughnutData(project) {
+  console.log("project", project)
   if (project === undefined) {
     project = [];
   }
@@ -40,20 +41,22 @@ export function createDoughnutData(project, legend) {
     }
   }]};
   for (const [key, value] of Object.entries(project)) {
-    if (key > Object.entries(project).length - 5) {
-      break
-    }
+    // if (key > Object.entries(project).length - 5) {
+    //   break
+    // }
     if (value != null) {
       returnData.datasets[0].data.push(value);
-      returnData.labels.push(legend[key]);
+      returnData.labels.push(key);
     }
   }
+  console.log(returnData);
   return returnData;
 }
 
 export function createDoughnutRoundData(voteData) {
-  let voteDataCopy = JSON.parse(JSON.stringify(voteData));
-  delete voteDataCopy.Badgeholder;
+  let voteDataCopy = JSON.parse(JSON.stringify(voteData.nominationVotes));
+  console.log(voteDataCopy);
+  //delete voteDataCopy.Badgeholder;
   const returnData = {
   labels: [],
   datasets: [{
@@ -74,8 +77,8 @@ export function createDoughnutRoundData(voteData) {
       break
     }
     if (value != null) {
-      returnData.datasets[0].data.push(value[Object.keys(value).length-4]);
-      console.log(value[Object.keys(value).length-4])
+      returnData.datasets[0].data.push(value);
+      console.log(value)
       returnData.labels.push(key);
     }
   }

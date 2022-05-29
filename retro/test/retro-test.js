@@ -22,7 +22,7 @@ describe("Retro", function () {
     await retro.deployed();
     const badgeHolders = [addr1.address,addr2.address];
     sleep(10000);
-    await retro.createRound("round1", badgeHolders, {value:ethers.utils.parseEther("0.0001")});
+    await retro.createRound("round1", badgeHolders,60,60,{value:ethers.utils.parseEther("0.0001")});
     console.log("createRound");
     sleep(10000);
     await retro.nominate(0,"nomination1", addr3.address, {value:ethers.utils.parseEther("0.00000005")});

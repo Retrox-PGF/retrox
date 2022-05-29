@@ -15,7 +15,7 @@ export async function getRounds() {
   const retroAddress = deployed_address
   const retroABI = [
     "function getNextRoundNum() public view returns (uint256)",
-    "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
+    "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256, uint256, uint256)"
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
 
@@ -41,6 +41,8 @@ export async function getRounds() {
       console.error(error)
     }
 
+    console.log(round);
+
     rounds.push({
       roundURI: round[0],
       ...body,
@@ -48,6 +50,8 @@ export async function getRounds() {
       fundsCommitted: ethers.utils.formatEther(round[2]),
       nominationCounter: round[3].toNumber(),
       totalVotes: round[4].toNumber(),
+      nominationDuration: round[5].toNumber(),
+      votingDuration: round[6].toNumber()
     })
   }
 
