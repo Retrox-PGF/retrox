@@ -1,3 +1,4 @@
+import { UserRejectedRequestError } from "@wagmi/core";
 import { ethers } from "ethers"
 import { deployed_address } from '../contract_config.js';
 
@@ -23,31 +24,34 @@ export async function getNominations(id) {
 
   let nominations = [];
   for (let i = 0; i < nominationNum; i++) {
-    const nom = await retroContract.getNominationData(id, i);
+    nominations.push(new Promise(async (resolve, reject) => {
+      const nom = await retroContract.getNominationData(id, i);
 
-    // check that ipfs URI is formatted properly
-    const match = nom[0].match(IPFS_REGEX);
-    if (!match) {
-      continue;
-    }
+      // check that ipfs URI is formatted properly
+      const match = nom[0].match(IPFS_REGEX);
+      if (!match) {
+        reject("not a valid ipfs identifier")
+      }
+  
+      const url = uriToURL(nom[0]);
+      const res = await fetch(url);
+  
+      let body;
+      try {
+        body = await res.json()
+      } catch (error) {
+        reject(error)
+      }
 
-    const url = uriToURL(nom[0]);
-    const res = await fetch(url);
-
-    let body;
-    try {
-      body = await res.json()
-    } catch (error) {
-      console.error(error)
-    }
-
-    nominations.push({
-      nominationURI: nom[0],
-      ...body,
-      recipient: nom[1],
-      numVotes: nom[2].toNumber()
-    })
+      resolve({
+        nominationURI: nom[0],
+        ...body,
+        recipient: nom[1],
+        numVotes: nom[2].toNumber()
+      })
+    }))
+    
   }
 
-  return nominations;
+  return await Promise.all(nominations);
 }
