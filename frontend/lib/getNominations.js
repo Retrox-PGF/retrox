@@ -1,6 +1,7 @@
 import { UserRejectedRequestError } from "@wagmi/core";
 import { ethers } from "ethers"
 import { deployed_address } from '../contract_config.js';
+import { getRound } from "./getRounds.js";
 
 const IPFS_REGEX = /ipfs:[/]{2}[0-9a-zA-Z]{46}/g
 
@@ -20,7 +21,9 @@ export async function getNominations(id) {
     "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-  const nominationNum = (await retroContract.getRoundData(id))[3].toNumber();
+
+  const { round } = await getRound(id);
+  const nominationNum = round.nominationCounter
 
   let nominations = [];
   for (let i = 0; i < nominationNum; i++) {

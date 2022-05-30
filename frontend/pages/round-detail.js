@@ -2,7 +2,7 @@ const unorderedNominationsData = require('../data/optimismNominations.json');
 const fakeNominationsData = require('../data/fakeNominationData.json');
 const optimismVoteData = require('../data/optimismVotes.json');
 const fakeVoteData = require('../data/fakeVotes.json');
-const nominationsData = unorderedNominationsData.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
+const nominationsData = unorderedNominationsData.sort((a, b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0))
 
 import SiteHead from '../components/SiteHead';
 import Layout from '../components/Layout';
@@ -17,10 +17,14 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { ethers } from 'ethers';
 import { useAccount, useProvider } from 'wagmi';
-import { getRounds } from "../lib/getRounds"
+import { getRounds, getRound } from "../lib/getRounds"
 import { deployed_address } from '../contract_config.js';
 
-export default function Nominations({ input }) {
+import { getNominations } from "../lib/getNominations";
+import { getBadgeHolderVotes } from '../lib/getBadgeHolderVotes';
+import { RoundContext } from '../lib/RoundContext';
+
+export default function Nominations({ }) {
   //Modal
   const [showChartModal, setShowChartModal] = useState(false)
   const [showBadgeholderModal, setShowBadgeholderModal] = useState(false)
@@ -30,7 +34,6 @@ export default function Nominations({ input }) {
   const [address, setAddress] = useState(false);
   const provider = useProvider();
   const { rounds } = useContext(RoundContext);
-  console.log(`rounds: ${JSON.stringify(rounds, null, 2)}`)
 
   const { data: account } = useAccount();
   useEffect(() => {
@@ -41,11 +44,34 @@ export default function Nominations({ input }) {
   //Get round
   const router = useRouter()
   const roundID = router.query.id;
+
+  const [input, setInput] = useState({});
+  const [loaded, setLoaded] = useState(false);
+  const [round, setRound] = useState();
+
+  useEffect(() => {
+    if (!roundID) {
+      return;
+    }
+
+    (async () => {
+      const _input = {
+        nominations: await getNominations(roundID),
+        round: await getRound(roundID),
+        badgeHolderVotes: await getBadgeHolderVotes(roundID)
+      }
+      setInput(_input)
+      setRound(_input.round.round)
+      setLoaded(true);
+    })();
+
+  }, [roundID])
+
   //const round = rounds.find(o => o.id == roundID);
-  const round = input.rounds[roundID];
+  // useEffect(() => {
+  //   setRound((!rounds.length) ? input.round : rounds[roundID]);
+  // }, [input, roundID])
   //END
-  console.log("nominations");
-  console.log(input.nominations);
 
   //Click on nomination
   const [nomination, setNomination] = useState(0);
@@ -55,12 +81,11 @@ export default function Nominations({ input }) {
   //END
 
   //Badgeholder logic, status is as follows; {0 = inelligible (not whitelisted), 1 = eligible, 2 = voted}
-  async function contractInitBadgeholder(badgeAddress){
+  async function contractInitBadgeholder(badgeAddress) {
     const retroAddress = deployed_address;
     const retroABI = [
       "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
     ]
-    console.log(await provider.getCode(retroAddress))
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
     return await retroContract.getBadgeHolderStatus(roundID, badgeAddress);
   }
@@ -68,21 +93,27 @@ export default function Nominations({ input }) {
 
   //Voting logic
   const [votesRemaining, setVotesRemaining] = useState(0);
-  const [ballot, setBallot] = useState(Array(input.nominations.length).fill(0));
+  // const [ballot, setBallot] = useState(Array(round.nominationCounter).fill(0));
+  const [ballot, setBallot] = useState([]);
   const [canVote, setCanVote] = useState(false);
   const [votingState, setVotingState] = useState(0);
   const [votedOnObject, setVotedOnObject] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   function updateVote(index, plus) {
-    const modBallot = ballot;
+    const modBallot = !ballot.length ? (
+      Array(round.nominationCounter).fill(0))
+      : (
+        ballot
+      );
 
-    if (plus && (votesRemaining - ((modBallot[index] + 1)*(modBallot[index] + 1) - (modBallot[index])*(modBallot[index]))) >= 0) {
-      setVotesRemaining(votesRemaining - ((modBallot[index] + 1)*(modBallot[index] + 1) - (modBallot[index])*(modBallot[index])));
+
+    if (plus && (votesRemaining - ((modBallot[index] + 1) * (modBallot[index] + 1) - (modBallot[index]) * (modBallot[index]))) >= 0) {
+      setVotesRemaining(votesRemaining - ((modBallot[index] + 1) * (modBallot[index] + 1) - (modBallot[index]) * (modBallot[index])));
       modBallot[index]++;
     } else if (!plus && votesRemaining != 100) {
       if (modBallot[index] != 0) {
-        setVotesRemaining(votesRemaining + ((modBallot[index])*(modBallot[index]) - (modBallot[index]-1)*(modBallot[index]-1)));
+        setVotesRemaining(votesRemaining + ((modBallot[index]) * (modBallot[index]) - (modBallot[index] - 1) * (modBallot[index] - 1)));
         modBallot[index]--;
       }
     }
@@ -102,11 +133,15 @@ export default function Nominations({ input }) {
     // substract time from endtime to check whether voting is closed
     // convert time into votingState
     var votingState = 0;
-    if((Date.now()/1000) - round.startBlockTimestamp <= round.nominationDuration) {
+    if (!round) {
+      return -1;
+    }
+
+    if ((Date.now() / 1000) - round.startBlockTimestamp <= round.nominationDuration) {
       votingState = 0; // nominations in progress
-    } else if ((Date.now()/1000)-round.startBlockTimestamp <= (round.nominationDuration + round.votingDuration)){
+    } else if ((Date.now() / 1000) - round.startBlockTimestamp <= (round.nominationDuration + round.votingDuration)) {
       votingState = 1; // voting in progress
-    } else if ((Date.now()/1000) - round.startBlockTimestamp > (round.nominationDuration + round.votingDuration)) {
+    } else if ((Date.now() / 1000) - round.startBlockTimestamp > (round.nominationDuration + round.votingDuration)) {
       votingState = 2; // voting finished
     }
     console.log("voting state", votingState);
@@ -124,23 +159,32 @@ export default function Nominations({ input }) {
     const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
     console.log("ballot");
     console.log(ballot);
-    const squaredBallot = ballot.map(vote => vote**2);
+    const squaredBallot = ballot.map(vote => vote ** 2);
     console.log("squared ballot");
     const vote = squaredBallot[nomination];
     await retroContract.connect(signer).castVote(roundID, nomination, vote);
     setIsSubmitted(true);
   }
 
-  function getBadgeHolderList() {
+  function getBadgeHolderList(round) {
     var badgeHolderList = {}
-    round.badgeholders.forEach((badgeholder, index) => {badgeHolderList[index] = badgeholder.twitter});
+    console.log(`in bh list`)
+    console.log(`${JSON.stringify(round, null, 2)}`);
+    if (!round.badgeholders) {
+      return {}
+    }
+    round.badgeholders.forEach((badgeholder, index) => { badgeHolderList[index] = badgeholder.twitter });
     console.log(badgeHolderList);
     return badgeHolderList;
   }
 
-  function getBadgeHolderMapping() {
+  function getBadgeHolderMapping(round) {
     var badgeHolderMapping = {}
-    round.badgeholders.forEach((badgeHolder) => {badgeHolderMapping[badgeHolder.twitter] = badgeHolder.address});
+    console.log(round);
+    if (!round.badgeholders) {
+      return {}
+    }
+    round.badgeholders.forEach((badgeHolder) => { badgeHolderMapping[badgeHolder.twitter] = badgeHolder.address });
     console.log(badgeHolderMapping);
     return badgeHolderMapping;
   }
@@ -176,9 +220,7 @@ export default function Nominations({ input }) {
   // }
 
   function getVoteData() {
-    const voteData = {nominationVotes: {}, totalVotes:round.totalVotes, fundingPool: round.fundsCommitted, badgeHolderVotes: {}}
-    const badgeHolderList = getBadgeHolderList();
-    const badgeHolderMapping = getBadgeHolderMapping();
+    const voteData = { nominationVotes: {}, totalVotes: round.totalVotes, fundingPool: round.fundsCommitted, badgeHolderVotes: {} }
     voteData.badgeHolderVotes = input.badgeHolderVotes;
     input.nominations.forEach((nomination, nominationIndex) => {
       voteData.nominationVotes[nomination.projectName] = nomination.numVotes;
@@ -214,7 +256,7 @@ export default function Nominations({ input }) {
       }
     }
     foo();
-  }, [address])
+  }, [address, round])
   //END
 
   //Close Modals
@@ -238,69 +280,53 @@ export default function Nominations({ input }) {
 
   return (
     <>
-    <SiteHead
-      title="Retr0x"
-      description="Retro-generative public goods funding">
-    </SiteHead>
-    <Layout>
-      {false ?
-        <RoundDetailMain
-          roundID={roundID}
-          roundName={roundID && round.roundName}
-          round={roundID && round}
-          selectNomination={selectNomination}
-          nomination={input.nominations[nomination]}
-          nominationData={input.nominations}
-          voteData={getVoteData()}
-          canVote={canVote}
-          votingState={votingState}
-          updateVote={updateVote}
-          votesRemaining={votesRemaining}
-          votedOnObject={votedOnObject}
-          showChartModal={() => setShowChartModal(true)}
-          isSubmitted={isSubmitted}
-          showBadgeholderModal={() => setShowBadgeholderModal(true)}
-          showFundingModal={() => setShowFundingModal(true)}
-          badgeholderList = {getBadgeHolderList()}
-          castVote={() => castVote}>
-        </RoundDetailMain>
-        :
-        <RoundDetailMainSkeleton>
-        </RoundDetailMainSkeleton>
-      }
-    </Layout>
-    {showChartModal &&
-      <ChartModal
-        close={() => setShowChartModal(false)}
-        voteData={getVoteData()}>
-      </ChartModal>}
-    {showBadgeholderModal &&
-      <BadgeholderModal
-        close={() => setShowBadgeholderModal(false)}
-        badgeholderList={getBadgeHolderList()}>
-      </BadgeholderModal>}
-    {showFundingModal &&
-      <FundingModal
-        round = {round}
-        close={() => setShowFundingModal(false)}>
-      </FundingModal>}
+      <SiteHead
+        title="Retr0x"
+        description="Retro-generative public goods funding">
+      </SiteHead>
+      <Layout>
+        {loaded && round ?
+          <RoundDetailMain
+            roundID={roundID}
+            roundName={roundID && round.roundName}
+            round={roundID && round}
+            selectNomination={selectNomination}
+            nomination={input.nominations[nomination]}
+            nominationData={input.nominations}
+            voteData={getVoteData()}
+            canVote={canVote}
+            votingState={votingState}
+            updateVote={updateVote}
+            votesRemaining={votesRemaining}
+            votedOnObject={votedOnObject}
+            showChartModal={() => setShowChartModal(true)}
+            isSubmitted={isSubmitted}
+            showBadgeholderModal={() => setShowBadgeholderModal(true)}
+            showFundingModal={() => setShowFundingModal(true)}
+            badgeholderList={getBadgeHolderList(round)}
+            castVote={() => castVote}>
+          </RoundDetailMain>
+          :
+          <RoundDetailMainSkeleton>
+          </RoundDetailMainSkeleton>
+        }
+      </Layout>
+      {showChartModal &&
+        <ChartModal
+          close={() => setShowChartModal(false)}
+          voteData={getVoteData()}>
+        </ChartModal>}
+      {showBadgeholderModal && round &&
+        <BadgeholderModal
+          close={() => setShowBadgeholderModal(false)}
+          badgeholderList={getBadgeHolderList(round)}>
+        </BadgeholderModal>}
+      {showFundingModal &&
+        <FundingModal
+          round={round}
+          close={() => setShowFundingModal(false)}>
+        </FundingModal>}
     </>
   );
 }
 
-
-import { getNominations } from "../lib/getNominations";
-import { getBadgeHolderVotes } from '../lib/getBadgeHolderVotes';
-import { RoundContext } from '../lib/RoundContext';
-
-export async function getServerSideProps({ query }) {
-  return {
-    props: {
-      input: {
-        nominations: await getNominations(query.id),
-        rounds: await getRounds(),
-        badgeHolderVotes: await getBadgeHolderVotes(query.id)
-      }
-    }
-  }
-}

@@ -2,7 +2,7 @@ import SiteHead from '../components/SiteHead'
 import Link from 'next/link'
 import Image from 'next/image'
 
-import { loopOverData } from '../lib/pushoptimismData';
+// import { loopOverData } from '../lib/pushoptimismData';
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
             <Link href="/rounds">
               <a className="bg-white text-black p-4 rounded-2xl my-20 z-50 text-lg h-16">Launch app</a>
            </Link>
-           <button onClick={() => loopOverData(5)} className="text-white">Push data</button>
+           {/* <button onClick={() => loopOverData(5)} className="text-white">Push data</button> */}
           </div>
         </div>
       </main>
