@@ -54,14 +54,16 @@ export default function Nominations({ }) {
       return;
     }
 
+
     (async () => {
+      const _round = (!rounds.length) ? (await getRound(roundID)).round  : rounds[roundID];
       const _input = {
-        nominations: await getNominations(roundID),
-        round: await getRound(roundID),
-        badgeHolderVotes: await getBadgeHolderVotes(roundID)
+        nominations: await getNominations(roundID, _round),
+        round: _round,
+        badgeHolderVotes: await getBadgeHolderVotes(roundID, _round)
       }
       setInput(_input)
-      setRound(_input.round.round)
+      setRound(_round)
       setLoaded(true);
     })();
 

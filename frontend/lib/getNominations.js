@@ -10,7 +10,7 @@ function uriToURL(uri) {
   return `https://ipfs.infura.io/ipfs/${uri.slice(7)}`
 }
 
-export async function getNominations(id) {
+export async function getNominations(id, round) {
   console.log(id);
 
   const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_INFURA_URL);
@@ -22,7 +22,10 @@ export async function getNominations(id) {
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
 
-  const { round } = await getRound(id);
+  if (!round) {
+    console.log(`reloading round`)
+    var { round } = await getRound(id);
+  }
   const nominationNum = round.nominationCounter
 
   let nominations = [];

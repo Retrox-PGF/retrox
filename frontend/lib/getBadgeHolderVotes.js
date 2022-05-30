@@ -9,7 +9,7 @@ function uriToURL(uri) {
   return `https://ipfs.infura.io/ipfs/${uri.slice(7)}`
 }
 
-export async function getBadgeHolderVotes(id) {
+export async function getBadgeHolderVotes(id, round) {
   console.log(id);
 
   const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_INFURA_URL);
@@ -22,7 +22,9 @@ export async function getBadgeHolderVotes(id) {
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
 
-  const { round } = await getRound(id);
+  if (!round) {
+    var { round } = await getRound(id);
+  }
   console.log(`roundData: ${JSON.stringify(round, null, 2)}`)
   const nominationNum = round.nominationCounter;
 
