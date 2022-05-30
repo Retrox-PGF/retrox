@@ -33,7 +33,7 @@ export default function Rounds() {
         description="Retro-generative public goods funding">
       </SiteHead>
       <Layout>
-        {rounds ?
+        {rounds.length ?
           <RoundsMain
             rounds={rounds}
             cardClick={cardClick}>
