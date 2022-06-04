@@ -1,5 +1,6 @@
 import { ethers } from "ethers"
 import { deployed_address } from '../contract_config.js';
+import { getRound } from "./getRounds.js";
 
 const IPFS_REGEX = /ipfs:[/]{2}[0-9a-zA-Z]{46}/g
 
@@ -8,10 +9,10 @@ function uriToURL(uri) {
   return `https://ipfs.infura.io/ipfs/${uri.slice(7)}`
 }
 
-export async function getBadgeHolderVotes(id) {
+export async function getBadgeHolderVotes(id, round) {
   console.log(id);
 
-  const provider = new ethers.providers.JsonRpcProvider(process.env.INFURA_URL);
+  const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_INFURA_URL);
 
   const retroAddress = deployed_address
   const retroABI = [
@@ -20,13 +21,17 @@ export async function getBadgeHolderVotes(id) {
     "function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (string memory, address, uint256)"
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-  const nominationNum = (await retroContract.getRoundData(id))[3].toNumber();
-  const round = await retroContract.getRoundData(id);
+
+  if (!round) {
+    var { round } = await getRound(id);
+  }
+  console.log(`roundData: ${JSON.stringify(round, null, 2)}`)
+  const nominationNum = round.nominationCounter;
 
   // check that ipfs URI is formatted properly
-  const match = round[0].match(IPFS_REGEX);
+  const match = round.roundURI.match(IPFS_REGEX);
 
-  const url = uriToURL(round[0]);
+  const url = uriToURL(round.roundURI);
   const res = await fetch(url);
 
   let body;
@@ -38,7 +43,6 @@ export async function getBadgeHolderVotes(id) {
 
   console.log(body);
 
-  let nominations = [];
   let badgeHolderVotes = []
   for (let i = 0; i < nominationNum; i++) {
       badgeHolderVotes.push({});

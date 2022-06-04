@@ -1,14 +1,24 @@
 import SiteHead from '../components/SiteHead';
 import Layout from '../components/Layout';
 import RoundsMain from '../components/Rounds/Main';
+import RoundsMainSkeleton from '../components/Skeleton/Rounds/RoundsMainSkeleton';
 
 import { useRouter } from 'next/router';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { ethers } from 'ethers';
 import { getRounds } from "../lib/getRounds"
+import { RoundContext } from '../lib/RoundContext';
 
-export default function Rounds({ rounds }) {
-console.log(rounds)
+export default function Rounds() {
+  const { rounds, setRounds } = useContext(RoundContext)
+
+  useEffect(() => {
+    async function foo() {
+      setRounds(await getRounds());
+    }
+    foo();
+  }, [])
+
   //Round Card Click
   const router = useRouter()
   function cardClick(id) {
@@ -18,27 +28,21 @@ console.log(rounds)
 
   return (
     <>
-    <SiteHead
-      title="Retrox"
-      description="Retro-generative public goods funding">
-    </SiteHead>
-    <Layout>
-        <RoundsMain
-          rounds={rounds}
-          cardClick={cardClick}>
-        </RoundsMain>
-    </Layout>
+      <SiteHead
+        title="Retrox"
+        description="Retro-generative public goods funding">
+      </SiteHead>
+      <Layout>
+        {rounds.length ?
+          <RoundsMain
+            rounds={rounds}
+            cardClick={cardClick}>
+          </RoundsMain>
+          :
+          <RoundsMainSkeleton>
+          </RoundsMainSkeleton>
+        }
+      </Layout>
     </>
   );
-}
-
-
- 
-
-export async function getServerSideProps(context) {
-  return {
-    props: {
-      rounds: await getRounds()
-    }
-  }
 }
