@@ -112,7 +112,7 @@ contract Retro {
         Round storage round = rounds[roundNum];
         nominations[roundNum][round.nominationCounter].nominationURI = nominationURI;
         nominations[roundNum][round.nominationCounter].recipient = recipient;
-        rounds[roundCounter].fundsCommitted += msg.value;
+        rounds[roundNum].fundsCommitted += msg.value;
         round.nominationCounter++;
         emit NewNomination(roundNum, nominationURI, recipient);
     }
