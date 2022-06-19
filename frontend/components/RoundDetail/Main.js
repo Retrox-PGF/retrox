@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 import Footer from '../Footer';
 import ButtonGrid from './ButtonGrid';
-import NominationsGrid from './NominationsGrid';
+import NominationsGrid from './NominationsGrid/Main';
 import HeaderGrid from './HeaderGrid';
 
 export default function RoundDetailMain(props) {

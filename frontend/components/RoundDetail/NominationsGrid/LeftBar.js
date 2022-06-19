@@ -1,4 +1,4 @@
-export default function NominationsRow(onCardClick, selectedNomination, nominationData, voteData) {
+export default function LeftBar(onCardClick, selectedNomination, nominationData, voteData) {
   const nominations = nominationData.map((nomination, nominationID) =>
   <li className="flex items-center hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-700 p-2 rounded-xl hover:text-white group" onClick={() => onCardClick(nominationID)} key={nominationID}>
     <div className="flex flex-col">
@@ -9,6 +9,19 @@ export default function NominationsRow(onCardClick, selectedNomination, nominati
   </li>
   );
   return (
-    <>{nominations}</>
+    <div className="flex flex-col md:col-span-1 md:row-span-2 bg-white rounded-xl shadow-md">
+      <div className="flex flex-row justify-between">
+        <div className="px-6 py-5 font-semibold border-b border-gray-100 text-xl">
+          Nominations
+        </div>
+      </div>
+      <div className="p-4 flex-grow">
+      <div className="overflow-y-auto" style={{ maxHeight: "24rem" }}>
+        <ul className="p-3">
+          {nominations}
+        </ul>
+      </div>
+      </div>
+    </div>
   );
 }

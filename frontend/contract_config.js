@@ -1,1 +1,1 @@
-export const deployed_address = "0xFA3d67F68c5EFbfEE33BfA87f4Ba3632842B1E02"
+export const deployed_address = "0x9cd16cb1d4328f91951a54cb574a35d65865876a"

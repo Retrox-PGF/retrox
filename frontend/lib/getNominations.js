@@ -18,7 +18,7 @@ export async function getNominations(id, round) {
   const retroAddress = deployed_address
   const retroABI = [
     "function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (string memory, address, uint256)",
-    "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)"
+    "function nominations(uint256, uint256) public view returns (string memory, address, uint256)"
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
 
@@ -31,17 +31,17 @@ export async function getNominations(id, round) {
   let nominations = [];
   for (let i = 0; i < nominationNum; i++) {
     nominations.push(new Promise(async (resolve, reject) => {
-      const nom = await retroContract.getNominationData(id, i);
+      const nom = await retroContract.nominations(id, i);
 
       // check that ipfs URI is formatted properly
       const match = nom[0].match(IPFS_REGEX);
       if (!match) {
         reject("not a valid ipfs identifier")
       }
-  
+
       const url = uriToURL(nom[0]);
       const res = await fetch(url);
-  
+
       let body;
       try {
         body = await res.json()
@@ -56,7 +56,7 @@ export async function getNominations(id, round) {
         numVotes: nom[2].toNumber()
       })
     }))
-    
+
   }
 
   return await Promise.all(nominations);

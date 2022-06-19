@@ -23,6 +23,7 @@ import { deployed_address } from '../contract_config.js';
 import { getNominations } from "../lib/getNominations";
 import { getBadgeHolderVotes } from '../lib/getBadgeHolderVotes';
 import { RoundContext } from '../lib/RoundContext';
+import { checkVotingState, getVoteData, checkCanVote, castVote, updateVote, updateBinaryVote, castBinaryVote } from '../lib/votingLogic';
 
 export default function Nominations({ }) {
   //Modal
@@ -53,8 +54,6 @@ export default function Nominations({ }) {
     if (!roundID) {
       return;
     }
-
-
     (async () => {
       const _round = (!rounds.length) ? (await getRound(roundID)).round  : rounds[roundID];
       const _input = {
@@ -81,92 +80,6 @@ export default function Nominations({ }) {
     setNomination(id);
   }
   //END
-
-  //Badgeholder logic, status is as follows; {0 = inelligible (not whitelisted), 1 = eligible, 2 = voted}
-  async function contractInitBadgeholder(badgeAddress) {
-    const retroAddress = deployed_address;
-    const retroABI = [
-      "function getBadgeHolderStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
-    ]
-    const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-    return await retroContract.getBadgeHolderStatus(roundID, badgeAddress);
-  }
-  // END
-
-  //Voting logic
-  const [votesRemaining, setVotesRemaining] = useState(0);
-  // const [ballot, setBallot] = useState(Array(round.nominationCounter).fill(0));
-  const [ballot, setBallot] = useState([]);
-  const [canVote, setCanVote] = useState(false);
-  const [votingState, setVotingState] = useState(0);
-  const [votedOnObject, setVotedOnObject] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  function updateVote(index, plus) {
-    const modBallot = !ballot.length ? (
-      Array(round.nominationCounter).fill(0))
-      : (
-        ballot
-      );
-
-
-    if (plus && (votesRemaining - ((modBallot[index] + 1) * (modBallot[index] + 1) - (modBallot[index]) * (modBallot[index]))) >= 0) {
-      setVotesRemaining(votesRemaining - ((modBallot[index] + 1) * (modBallot[index] + 1) - (modBallot[index]) * (modBallot[index])));
-      modBallot[index]++;
-    } else if (!plus && votesRemaining != 100) {
-      if (modBallot[index] != 0) {
-        setVotesRemaining(votesRemaining + ((modBallot[index]) * (modBallot[index]) - (modBallot[index] - 1) * (modBallot[index] - 1)));
-        modBallot[index]--;
-      }
-    }
-    setBallot(modBallot);
-    getVotes(modBallot);
-  }
-
-  async function checkCanVote(address) {
-    const result = await contractInitBadgeholder(address);
-    console.log("voting status", result)
-    return result == 1;
-  }
-
-  async function checkVotingState() {
-    // calculate times based on round:
-    // get current time
-    // substract time from endtime to check whether voting is closed
-    // convert time into votingState
-    var votingState = 0;
-    if (!round) {
-      return -1;
-    }
-
-    if ((Date.now() / 1000) - round.startBlockTimestamp <= round.nominationDuration) {
-      votingState = 0; // nominations in progress
-    } else if ((Date.now() / 1000) - round.startBlockTimestamp <= (round.nominationDuration + round.votingDuration)) {
-      votingState = 1; // voting in progress
-    } else if ((Date.now() / 1000) - round.startBlockTimestamp > (round.nominationDuration + round.votingDuration)) {
-      votingState = 2; // voting finished
-    }
-    console.log("voting state", votingState);
-    // return votingState;
-    return 2;
-  }
-
-  async function castVote() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const retroAddress = deployed_address;
-    const retroABI = [
-      "function castVote(uint256 roundNum, uint256 nominationNum, uint256 tokenAllocation) public"
-    ]
-    const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-    console.log("ballot");
-    console.log(ballot);
-    const squaredBallot = ballot.map(vote => vote ** 2);
-    console.log("squared ballot");
-    const vote = squaredBallot[nomination];
-    await retroContract.connect(signer).castVote(roundID, nomination, vote);
-    setIsSubmitted(true);
-  }
 
   function getBadgeHolderList(round) {
     var badgeHolderList = {}
@@ -221,37 +134,38 @@ export default function Nominations({ }) {
   //   return voteData
   // }
 
-  function getVoteData() {
-    const voteData = { nominationVotes: {}, totalVotes: round.totalVotes, fundingPool: round.fundsCommitted, badgeHolderVotes: {} }
-    voteData.badgeHolderVotes = input.badgeHolderVotes;
-    input.nominations.forEach((nomination, nominationIndex) => {
-      voteData.nominationVotes[nomination.projectName] = nomination.numVotes;
-    })
-    return voteData
+  //Voting logic
+  const [votesRemaining, setVotesRemaining] = useState(0);
+  const [ballot, setBallot] = useState([]);
+  const [canVote, setCanVote] = useState(false);
+  const [votingState, setVotingState] = useState(0);
+  const [votedOnObject, setVotedOnObject] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  async function castVoteProxy() {
+    await castBinaryVote(ballot, roundID)
+    // await castVote(ballot, roundID, nomination);
+    setIsSubmitted(true);
   }
 
-  function getVotes(ballot) {
-    const votesObject = {};
-    ballot.forEach((element, i) => {
-      if (element) {
-        votesObject[i] = element;
-      }
-    })
-    setVotedOnObject(votesObject);
+  async function updateVoteProxy(index, plus) {
+    const { votesRemainingReturn, modBallotReturn, votesObjectReturn } =
+      await updateBinaryVote(index, plus, ballot, votesRemaining, round);
+    setVotesRemaining(votesRemainingReturn);
+    setBallot(modBallotReturn);
+    setVotedOnObject(votesObjectReturn);
   }
 
   useEffect(() => {
     async function foo() {
-      const votingState = await checkVotingState();
+      const votingState = await checkVotingState(round);
       if (votingState == 1 && address) {
-        const vote = await checkCanVote(address);
+        const vote = await checkCanVote(roundID, address);
         setVotingState(votingState);
         setCanVote(vote);
-
         if (!vote) {
           return;
         }
-
         setVotesRemaining(100);
       } else if (votingState == 2) {
         setVotingState(votingState);
@@ -278,8 +192,6 @@ export default function Nominations({ }) {
   }, [handleKeyPress]);
   //END
 
-  console.log("nomination, ", input.nominations);
-
   return (
     <>
       <SiteHead
@@ -295,18 +207,18 @@ export default function Nominations({ }) {
             selectNomination={selectNomination}
             nomination={input.nominations[nomination]}
             nominationData={input.nominations}
-            voteData={getVoteData()}
+            voteData={getVoteData(round, input)}
             canVote={canVote}
             votingState={votingState}
-            updateVote={updateVote}
+            updateVote={updateVoteProxy}
             votesRemaining={votesRemaining}
             votedOnObject={votedOnObject}
             showChartModal={() => setShowChartModal(true)}
             isSubmitted={isSubmitted}
             showBadgeholderModal={() => setShowBadgeholderModal(true)}
             showFundingModal={() => setShowFundingModal(true)}
-            badgeholderList={getBadgeHolderList(round)}
-            castVote={() => castVote}>
+            badgeholderList={() => getBadgeHolderList(round)}
+            castVote={castVoteProxy}>
           </RoundDetailMain>
           :
           <RoundDetailMainSkeleton>
@@ -316,7 +228,7 @@ export default function Nominations({ }) {
       {showChartModal &&
         <ChartModal
           close={() => setShowChartModal(false)}
-          voteData={getVoteData()}>
+          voteData={getVoteData(round, input)}>
         </ChartModal>}
       {showBadgeholderModal && round &&
         <BadgeholderModal
