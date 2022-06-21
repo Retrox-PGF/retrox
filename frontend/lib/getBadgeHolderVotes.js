@@ -16,7 +16,7 @@ export async function getBadgeHolderVotes(id, round) {
 
   const retroAddress = deployed_address
   const retroABI = [
-    "function getBadgeHolderVotes(uint256 roundNum, uint256 nominationNum, address badgeHolder) public view returns (uint256)",
+    "function badgeHolderVotes(address, uint256, uint256) public view returns (uint256)",
     "function getRoundData(uint256 roundNum) public view returns(string memory, uint256, uint256, uint256, uint256)",
     "function getNominationData(uint256 roundNum, uint256 nominationNum) public view returns (string memory, address, uint256)"
   ]
@@ -49,7 +49,7 @@ export async function getBadgeHolderVotes(id, round) {
       for (let j = 0; j < body.badgeholders.length; j++) {
         let badgeHolderAddress = body.badgeholders[j].address;
         let badgeHolderTwitter = body.badgeholders[j].twitter;
-        let badgeHolderVote = await retroContract.getBadgeHolderVotes(id, i, badgeHolderAddress);
+        let badgeHolderVote = await retroContract.badgeHolderVotes(badgeHolderAddress, id, i);
         badgeHolderVotes[i][badgeHolderTwitter] = badgeHolderVote.toNumber();
       }
   }
