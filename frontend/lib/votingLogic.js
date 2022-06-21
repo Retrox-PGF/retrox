@@ -65,7 +65,7 @@ function getBinaryVotes(ballot) {
 export async function checkCanVote(roundID, address) {
   const result = await contractInitBadgeholder(roundID, address);
   console.log("voting status", result)
-  // return result == 1;
+  return result == 1;
   return true;
 }
 
@@ -87,7 +87,7 @@ export async function checkVotingState(round) {
     votingState = 2; // voting finished
   }
   console.log("voting state", votingState);
-  // return votingState;
+  return votingState;
   return 1;
 }
 
@@ -115,7 +115,7 @@ export async function castBinaryVote(ballot, roundID) {
     "function castVotes(uint256 roundNum, uint256[] memory tokenAllocations) public"
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
-  await retroContract.connect(signer).castVotes(roundID, nomination, ballot);
+  await retroContract.connect(signer).castVotes(roundID, ballot);
 }
 
 export function getVoteData(round, input) {
