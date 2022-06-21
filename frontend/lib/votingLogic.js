@@ -38,12 +38,12 @@ function getVotes(ballot) {
 
 export function updateBinaryVote(index, plus, ballot, votesRemaining, round) {
   const modBallot = !ballot.length ? (
-    Array(round.nominationCounter).fill(2))
+    Array(round.nominationCounter).fill(0))
     : (
       ballot
     );
-  const votesRemainingReturn = modBallot[index] === 2 ? votesRemaining - 1 : votesRemaining;
-  modBallot[index] = plus ? 1 : 0;
+  const votesRemainingReturn = modBallot[index] === 0 ? votesRemaining - 1 : votesRemaining;
+  modBallot[index] = plus ? 1 : 2;
   const votesObjectReturn = getBinaryVotes(modBallot);
   return {
     votesRemainingReturn: votesRemainingReturn,
@@ -55,7 +55,7 @@ export function updateBinaryVote(index, plus, ballot, votesRemaining, round) {
 function getBinaryVotes(ballot) {
   const votesObject = {};
   ballot.forEach((element, i) => {
-    if (element !== 2) {
+    if (element !== 0) {
       votesObject[i] = element === 1 ? true : false;
     }
   })
@@ -88,7 +88,7 @@ export async function checkVotingState(round) {
   }
   console.log("voting state", votingState);
   return votingState;
-  return 1;
+  // return 1;
 }
 
 export async function castVote(ballot, roundID, nomination) {

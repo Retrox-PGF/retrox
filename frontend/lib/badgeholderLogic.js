@@ -5,7 +5,7 @@ export async function contractInitBadgeholder(roundID, badgeAddress) {
   const retroAddress = deployed_address;
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const retroABI = [
-    "function badgeHolderVoteStatus(uint256 roundNum, address badgeHolder) public view returns (uint256)"
+    "function badgeHolderVoteStatus(uint256, address) public view returns (uint256)"
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider);
   console.log(provider)
