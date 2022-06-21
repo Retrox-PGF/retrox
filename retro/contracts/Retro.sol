@@ -7,13 +7,13 @@ import "hardhat/console.sol";
 // initializing the CFA Library
 pragma solidity ^0.8.0;
 
-import { 
+import {
     ISuperfluid,
-    ISuperToken 
+    ISuperToken
 } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol"; //"@superfluid-finance/ethereum-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 
-import { 
-    IConstantFlowAgreementV1 
+import {
+    IConstantFlowAgreementV1
 } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
 
 import {
@@ -23,11 +23,11 @@ import {
 contract Retro {
 
     using CFAv1Library for CFAv1Library.InitData;
-    
+
     //initialize cfaV1 variable
     CFAv1Library.InitData public cfaV1;
     ISuperfluid public host;
-    
+
     constructor(address _host)  {
         host = ISuperfluid(_host);
         //initialize InitData struct, and set equal to cfaV1
@@ -41,16 +41,16 @@ contract Retro {
                 )
             );
     }
-    
+
     uint256 constant tokensPerBadgeHolder = 100;
     uint256 constant minRoundCreationThreshold = 1;
-    uint256 constant minNominationThreshold = 1; 
+    uint256 constant minNominationThreshold = 1;
     uint256 constant minDisperseAmount = 1;
 
     enum RoundState {
         Nominations,
-        Voting, 
-        Disbursement, 
+        Voting,
+        Disbursement,
         Cancelled
     }
 
@@ -71,7 +71,7 @@ contract Retro {
         uint256 numVotes;
     }
 
-    mapping (uint256 => Round) public rounds; 
+    mapping (uint256 => Round) public rounds;
     mapping (uint256 => mapping (uint256 => Nomination)) public nominations;
     mapping(uint256 => mapping (address => uint256)) public badgeHolderVoteStatus; //0 = inelligible, 1 = eligible, 2 = voted
     mapping(uint256  => uint256) public amounts;
@@ -123,7 +123,7 @@ contract Retro {
         require(badgeHolderVoteStatus[roundNum][msg.sender] == 1, "Not eligible to vote");
         Round storage round = rounds[roundNum];
         Nomination storage nomination = nominations[roundNum][nominationNum];
-        uint256 votePower = sqrt(tokenAllocation); // QV vote 
+        uint256 votePower = sqrt(tokenAllocation); // QV vote
         if(badgeHolderVotes[msg.sender][roundNum][nominationNum] > 0) {
             nomination.numVotes -= sqrt(badgeHolderVotes[msg.sender][roundNum][nominationNum]);
             round.totalVotes -= sqrt(badgeHolderVotes[msg.sender][roundNum][nominationNum]);

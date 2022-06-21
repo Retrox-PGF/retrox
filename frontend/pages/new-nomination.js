@@ -42,6 +42,7 @@ export default function NewNomination() {
       ipfsURI: ipfsURI,
       recipientAddress: recipientAddress.value
     })
+    console.log(metadata)
     console.log(roundID)
     console.log(recipientAddress.value)
     await contractInitNomination(roundID, ipfsURI, recipientAddress.value)
