@@ -22,3 +22,4 @@ typechain
 
 # Local deployments
 deployed_contracts/local.json
+.vercel

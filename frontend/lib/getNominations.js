@@ -24,7 +24,11 @@ export async function getNominations(id, round) {
 
   if (!round) {
     console.log(`reloading round`)
-    var { round } = await getRound(id);
+    var { round, error }  = await getRound(id);
+    if (error) {
+      console.error(error);
+    }
+    console.log(round)
   }
   const nominationNum = round.nominationCounter
 
