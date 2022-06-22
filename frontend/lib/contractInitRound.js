@@ -10,5 +10,5 @@ export async function contractInitRound(roundURI, badgeholders, nominationDurati
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
   console.log(retroContract)
-  await retroContract.connect(signer).createRound(roundURI, "0x7b5a805226be647427f309b65be8aee8374484ad", "0x7b5a805226be647427f309b65be8aee8374484ad", badgeholders, nominationDuration, votingDuration, {value:ethers.utils.parseEther(`${value}`)});
+  await retroContract.connect(signer).createRound(roundURI, "0x590A5B7F4F920F6A0F42D240bbe5dE8038AC1677", "0x590A5B7F4F920F6A0F42D240bbe5dE8038AC1677", badgeholders, nominationDuration, votingDuration, {value:ethers.utils.parseEther(`${value}`)});
 }

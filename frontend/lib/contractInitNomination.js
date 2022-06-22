@@ -9,5 +9,5 @@ export async function contractInitNomination(roundNum, nominationURI, address){
     "function nominate(uint256 roundNum, string memory nominationURI, address recipient) public payable"
   ]
   const retroContract = new ethers.Contract(retroAddress, retroABI, provider)
-  await retroContract.connect(signer).nominate(roundNum, nominationURI, address, {value:ethers.utils.parseEther("0.01")});
+  await retroContract.connect(signer).nominate(roundNum, nominationURI, address, {value:ethers.utils.parseEther("0.000001")});
 }

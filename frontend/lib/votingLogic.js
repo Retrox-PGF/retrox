@@ -87,8 +87,8 @@ export async function checkVotingState(round) {
     votingState = 2; // voting finished
   }
   console.log("voting state", votingState);
-  return votingState;
-  // return 1;
+  //return votingState;
+  return 1;
 }
 
 export async function castVote(ballot, roundID, nomination) {

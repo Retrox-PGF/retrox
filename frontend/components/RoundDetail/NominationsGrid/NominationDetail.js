@@ -11,8 +11,7 @@ export default function NominationDetail(props) {
         <div className="grid grid-rows-2 grid-flow-col mb-2">
           <div>Proposer: {props.nomination.nominatorName}</div>
           <div>Website: <a href={props.nomination.projectURL} target="_blank" rel="noreferrer" className="text-blue-600">{props.nomination.projectName}</a></div>
-          <div>Project lead: {props.nomination.projectLeadName}</div>
-          <div>Project lead email: {props.nomination.projectLeadEmail}</div>
+          <div>Categories: {props.nomination.projectLeadName}</div>
         </div>
       <div className="font-semibold mt-2 text-lg">Description</div>
         <p>
